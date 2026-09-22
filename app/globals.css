@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FBF6EC;
+  color: #0B2E3D;
+}
+
+/* Motif discret de lignes de terrain, utilisé en fond de section plutôt que des icônes génériques */
+.court-lines {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgba(11, 46, 61, 0.06) 0px,
+      rgba(11, 46, 61, 0.06) 1px,
+      transparent 1px,
+      transparent 64px
+    );
+}
+
+.court-lines-dark {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 64px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 64px
+    );
+}
+
+.rule {
+  height: 1px;
+  background: rgba(11, 46, 61, 0.15);
+}
+
+.tag-label {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: #E8593B;
+  font-weight: 600;
+}
+
+/* Focus visible clair, accessibilité */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #12807F;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background: #F4A63B;
+  color: #0B2E3D;
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "evt-1",
+    "title": "Tournoi découverte de la plage",
+    "date": "2026-09-26",
+    "category": "Débutants & familles",
+    "description": "Un tournoi convivial en doublette, ouvert à tous les niveaux, pour découvrir le beach tennis dans la bonne humeur. Initiation gratuite 30 min avant le début du tournoi.",
+    "entryFee": 3000,
+    "prize": "Bons d'achat boutique + raquette pour l'équipe gagnante",
+    "capacity": 32,
+    "registrations": []
+  },
+  {
+    "id": "evt-2",
+    "title": "Open Beach Tennis Bénin",
+    "date": "2026-10-24",
+    "category": "Confirmés",
+    "description": "Tournoi mensuel phare en simple et double, catégorie confirmés. Classement ladder mis à jour à l'issue de l'événement.",
+    "entryFee": 5000,
+    "prize": "Dotation équipementier + invitations VIP événement du mois suivant",
+    "capacity": 24,
+    "registrations": []
+  }
+]

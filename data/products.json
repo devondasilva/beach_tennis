@@ -1,0 +1,50 @@
+[
+  {
+    "id": "raq-01",
+    "name": "Raquette beach tennis Initiation",
+    "category": "Raquettes",
+    "price": 12000,
+    "description": "Raquette en fibre de carbone légère, idéale pour débuter et progresser rapidement.",
+    "stock": 18
+  },
+  {
+    "id": "raq-02",
+    "name": "Raquette beach tennis Performance",
+    "category": "Raquettes",
+    "price": 22000,
+    "description": "Raquette au toucher précis pour les joueurs confirmés, noyau EVA haute densité.",
+    "stock": 10
+  },
+  {
+    "id": "balles-01",
+    "name": "Tube de 3 balles beach tennis",
+    "category": "Balles",
+    "price": 5000,
+    "description": "Balles basse pression spécial sable, homologuées compétition.",
+    "stock": 40
+  },
+  {
+    "id": "sac-01",
+    "name": "Sac de plage porte-raquette",
+    "category": "Accessoires",
+    "price": 9000,
+    "description": "Sac imperméable avec compartiment raquette, pensé pour le sable et l'humidité.",
+    "stock": 15
+  },
+  {
+    "id": "tenue-01",
+    "name": "T-shirt technique Beach Tennis Bénin",
+    "category": "Tenues",
+    "price": 6000,
+    "description": "T-shirt respirant séchage rapide, coupe unisexe, floqué du logo du club.",
+    "stock": 25
+  },
+  {
+    "id": "casquette-01",
+    "name": "Casquette anti-UV",
+    "category": "Accessoires",
+    "price": 4000,
+    "description": "Protection solaire légère, ajustable, pour jouer confortablement en pleine journée.",
+    "stock": 30
+  }
+]
