@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Menu, X, UserCircle } from "lucide-react";
 
 const links = [
   { href: "/plages", label: "Plages" },
@@ -13,11 +15,83 @@ const links = [
   { href: "/classement", label: "Classement" },
 ];
 
+interface NavLinkProps {
+  href: string;
+  label: string;
+  isActive: boolean;
+  mobile?: boolean;
+  onClick: () => void;
+}
+
+// Sorti du corps de Navbar : évite de recréer/remonter le composant
+// (et donc de perdre le focus clavier) à chaque re-render.
+function NavLink({ href, label, isActive, mobile = false, onClick }: NavLinkProps) {
+  const baseClasses = "transition-colors duration-200 tracking-widest uppercase touch-manipulation";
+
+  const desktopClasses = `text-sm font-medium hover:text-sun ${
+    isActive ? "text-sun" : "text-sandlight/90"
+  }`;
+
+  // py-5 (au lieu de py-6) + min-h-[56px] : cible tactile confortable
+  // sans gaspiller trop d'espace vertical sur petits écrans (iPhone SE etc.)
+  const mobileClasses = `flex items-center justify-center min-h-[56px] py-4 text-center text-lg sm:text-xl font-bold w-full border-b border-sandlight/10 active:bg-ink/70 ${
+    isActive ? "text-sun bg-ink/50" : "text-sandlight"
+  }`;
+
+  return (
+    <Link
+      href={href}
+      className={mobile ? `${baseClasses} ${mobileClasses}` : `${baseClasses} ${desktopClasses}`}
+      onClick={onClick}
+      aria-current={isActive ? "page" : undefined}
+    >
+      {label}
+    </Link>
+  );
+}
+
 export default function Navbar() {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavRef = useRef<HTMLElement>(null);
+  const scrollLockY = useRef(0);
+
+  const headerBarRef = useRef<HTMLDivElement>(null);
+
+  const closeMenu = useCallback(() => setIsOpen(false), []);
+
+  // --- Expose la hauteur réelle de la barre (logo/liens/burger) en variable CSS ---
+  // Le header est en `fixed`, donc chaque page doit compenser avec un padding-top
+  // égal à cette hauteur. On la mesure dynamiquement (plutôt que de la deviner en
+  // dur par breakpoint) pour rester juste sur toutes les tailles d'écran et si le
+  // design de la barre évolue plus tard. Les pages n'ont alors qu'à utiliser
+  // `padding-top: calc(var(--nav-height) + <espace souhaité>)`.
+  useEffect(() => {
+    const el = headerBarRef.current;
+    if (!el) return;
+
+    const setVar = () => {
+      document.documentElement.style.setProperty("--nav-height", `${el.offsetHeight}px`);
+    };
+
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    window.addEventListener("orientationchange", setVar);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("orientationchange", setVar);
+    };
+  }, []);
+
+  // --- GESTION DU SCROLL (masquer/afficher la navbar), avec throttle via rAF ---
   useEffect(() => {
     const handleScroll = () => {
       if (isOpen) return; // ne jamais masquer pendant que le menu mobile est ouvert
@@ -95,44 +169,6 @@ export default function Navbar() {
       document.body.style.width = "";
     };
   }, [isOpen]);
-
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((d) => setSession(d.session))
-      .finally(() => setSessionLoaded(true));
-  }, []);
-
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setSession(null);
-    router.push("/");
-    router.refresh();
-  }
-
-  const accountLink =
-    sessionLoaded && session?.role === "admin" ? (
-      <Link
-        href="/admin"
-        className="hidden md:inline-flex items-center rounded-card border border-sandlight/30 text-xs font-semibold tracking-widest uppercase px-4 py-2 hover:border-sun hover:text-sun transition-colors"
-      >
-        Tableau de bord
-      </Link>
-    ) : sessionLoaded && session?.role === "player" ? (
-      <Link
-        href="/profil"
-        className="hidden md:inline-flex items-center rounded-card border border-sandlight/30 text-xs font-semibold tracking-widest uppercase px-4 py-2 hover:border-sun hover:text-sun transition-colors"
-      >
-        Mon profil
-      </Link>
-    ) : (
-      <Link
-        href="/login"
-        className="hidden md:inline-flex items-center rounded-card border border-sandlight/30 text-xs font-semibold tracking-widest uppercase px-4 py-2 hover:border-sun hover:text-sun transition-colors"
-      >
-        Connexion
-      </Link>
-    );
 
   return (
     <header
@@ -250,15 +286,9 @@ export default function Navbar() {
               />
             ))}
           </nav>
-          <Link
-            href="/profil"
-            className="hidden md:inline-flex items-center rounded-card border border-sandlight/30 text-xs font-semibold tracking-widest uppercase px-4 py-2 hover:border-sun hover:text-sun transition-colors"
-          >
-            Mon profil
-          </Link>
-        </div>
-        <nav className="flex md:hidden gap-5 overflow-x-auto pb-3 text-xs font-semibold tracking-widest uppercase">
-          {links.map((l) => (
+
+          {/* Espace Profil dans le menu mobile */}
+          <div className="mt-auto w-full px-6 pt-6 pb-4 border-t border-sandlight/10">
             <Link
               href="/profil"
               onClick={closeMenu}
@@ -267,11 +297,8 @@ export default function Navbar() {
               <UserCircle size={24} />
               Mon Espace
             </Link>
-          ))}
-          <Link href="/profil" className="whitespace-nowrap text-sun">
-            Profil
-          </Link>
-        </nav>
+          </div>
+        </div>
       </div>
     </header>
   );
