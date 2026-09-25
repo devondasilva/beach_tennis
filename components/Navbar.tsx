@@ -99,7 +99,6 @@ export default function Navbar() {
   }, []);
 
   // --- GESTION DU SCROLL (masquer/afficher la navbar), avec throttle via rAF ---
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [session, setSession] = useState<Session | null>(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
 
@@ -338,52 +337,26 @@ export default function Navbar() {
 
           {/* Espace Profil dans le menu mobile */}
           <div className="mt-auto w-full px-6 pt-6 pb-4 border-t border-sandlight/10">
-          <div className="hidden md:flex items-center gap-3">
-            {accountLink}
+            <Link
+              href={session?.role === "admin" ? "/admin" : "/profil"}
+              onClick={closeMenu}
+              className="flex w-full items-center justify-center gap-3 rounded-full bg-sandlight/10 active:bg-sandlight/20 py-4 min-h-[56px] text-lg font-semibold text-sandlight touch-manipulation"
+            >
+              <UserCircle size={24} />
+              {session?.role === "admin" ? "Tableau de bord" : "Mon Espace"}
+            </Link>
+            {sessionLoaded && !session && (
+              <Link href="/login" onClick={closeMenu} className="mt-3 block text-center text-sun">
+                Connexion
+              </Link>
+            )}
             {sessionLoaded && session && (
-              <button
-                onClick={handleLogout}
-                className="text-xs font-semibold tracking-widest uppercase text-sandlight/50 hover:text-coral transition-colors"
-              >
+              <button onClick={handleLogout} className="mt-3 w-full text-center text-sandlight/50">
                 Déconnexion
               </button>
             )}
           </div>
         </div>
-        <nav className="flex md:hidden gap-5 overflow-x-auto pb-3 text-xs font-semibold tracking-widest uppercase">
-          {links.map((l) => (
-            <Link
-              href="/profil"
-              onClick={closeMenu}
-              className="flex w-full items-center justify-center gap-3 rounded-full bg-sandlight/10 active:bg-sandlight/20 py-4 min-h-[56px] text-lg font-semibold text-sandlight touch-manipulation"
-            >
-              <UserCircle size={24} />
-              Mon Espace
-            </Link>
-          </div>
-        </div>
-          ))}
-          {sessionLoaded && session?.role === "admin" && (
-            <Link href="/admin" className="whitespace-nowrap text-sun">
-              Dashboard
-            </Link>
-          )}
-          {sessionLoaded && session?.role === "player" && (
-            <Link href="/profil" className="whitespace-nowrap text-sun">
-              Profil
-            </Link>
-          )}
-          {sessionLoaded && !session && (
-            <Link href="/login" className="whitespace-nowrap text-sun">
-              Connexion
-            </Link>
-          )}
-          {sessionLoaded && session && (
-            <button onClick={handleLogout} className="whitespace-nowrap text-sandlight/50">
-              Déconnexion
-            </button>
-          )}
-        </nav>
       </div>
     </header>
   );
