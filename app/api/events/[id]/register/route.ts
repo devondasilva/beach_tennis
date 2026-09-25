@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findOrCreatePlayer, registerToEvent } from "@/lib/db";
+import { findOrCreatePlayer, registerToEvent, removeEventRegistration } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(
   req: NextRequest,
@@ -25,4 +27,27 @@ export async function POST(
   }
 
   return NextResponse.json({ message: result.message, event: result.event, player });
+}
+
+/** Retrait d'une inscription par un administrateur. Body : { playerId } */
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const { playerId } = body as { playerId: string };
+  if (!playerId) {
+    return NextResponse.json({ error: "playerId requis." }, { status: 400 });
+  }
+
+  const event = removeEventRegistration(params.id, playerId);
+  if (!event) {
+    return NextResponse.json({ error: "Événement introuvable." }, { status: 404 });
+  }
+  return NextResponse.json({ event });
 }

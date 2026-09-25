@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "playerId": "pl-mugd1taw-189xq",
+    "playerName": "Dev",
+    "beachId": "beach-haie-vive",
+    "beachName": "Plage de la Haie Vive",
+    "tariffId": "decouverte",
+    "tariffLabel": "Séance découverte (1 personne · 30 min)",
+    "date": "2026-09-25",
+    "time": "16:00",
+    "price": 1000,
+    "paymentMethod": "mtn_momo",
+    "status": "confirmee",
+    "id": "bk-mugd1tax-g6ywf",
+    "createdAt": "2026-09-25T02:47:38.649Z"
+  }
+]

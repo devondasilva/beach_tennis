@@ -13,6 +13,7 @@ interface Player {
 }
 interface Booking {
   id: string;
+  beachName: string;
   tariffLabel: string;
   date: string;
   time: string;
@@ -77,9 +78,25 @@ export default function ProfilClient() {
   }
 
   useEffect(() => {
-    if (initialId) loadById(initialId);
+    if (initialId) {
+      loadById(initialId);
+      return;
+    }
+    // Pas d'id en paramètre : on tente de retrouver la session joueur active.
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.session?.role === "player") {
+          loadById(d.session.id);
+        }
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialId]);
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setData(null);
+  }
 
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
@@ -109,6 +126,13 @@ export default function ProfilClient() {
           <p className="mt-3 text-ink/70">
             Entrez le numéro de téléphone utilisé lors d&rsquo;une réservation pour
             afficher votre QR code, vos points et votre historique.
+          </p>
+          <p className="mt-2 text-sm text-ink/50">
+            Ou{" "}
+            <a href="/login" className="text-coral font-semibold hover:underline">
+              connectez-vous depuis la page de connexion
+            </a>
+            .
           </p>
           <form onSubmit={handleLookup} className="mt-8 space-y-3">
             <input
@@ -164,6 +188,12 @@ export default function ProfilClient() {
             <p className="text-xs text-sandlight/60 mt-1">
               200 points = une séance offerte
             </p>
+            <button
+              onClick={handleLogout}
+              className="mt-4 text-xs font-semibold uppercase tracking-widest text-sandlight/50 hover:text-coral transition-colors"
+            >
+              Se déconnecter
+            </button>
           </div>
         </div>
 
@@ -180,7 +210,7 @@ export default function ProfilClient() {
                     className="flex items-center justify-between rounded-card border border-ink/10 px-4 py-3 text-sm"
                   >
                     <span>
-                      {b.tariffLabel} — {b.date} à {b.time}
+                      {b.tariffLabel} — {b.beachName} — {b.date} à {b.time}
                     </span>
                     <span className="font-semibold text-ink">{formatFCFA(b.price)}</span>
                   </li>

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "beach-fidjrosse",
+    "name": "Plage de Fidjrossè",
+    "location": "Fidjrossè, Cotonou",
+    "description": "Notre site historique, chez un restaurant partenaire en bord de plage. Sable large, coucher de soleil dégagé, terrain principal ouvert tous les week-ends.",
+    "amenities": [
+      "Coach sur place",
+      "Location de raquettes",
+      "Restauration sur place",
+      "Parking"
+    ],
+    "images": [
+      "/uploads/beaches/mugd0igt-ii3j71.jpg"
+    ],
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "beach-haie-vive",
+    "name": "Plage de la Haie Vive",
+    "location": "Haie Vive, Cotonou",
+    "description": "Deuxième site, plus proche du centre-ville, avec une ambiance familiale et un accès facile pour les groupes.",
+    "amenities": [
+      "Coach sur place",
+      "Zone ombragée",
+      "Boutique sur site"
+    ],
+    "images": [],
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]
