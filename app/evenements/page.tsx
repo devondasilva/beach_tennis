@@ -8,7 +8,7 @@ export default function EvenementsPage() {
   const events = getEvents().sort((a, b) => (a.date > b.date ? 1 : -1));
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
       <div className="max-w-xl">
         <p className="tag-label mb-3">Événements</p>
         <h1 className="font-display text-4xl text-ink">Le tournoi du mois</h1>

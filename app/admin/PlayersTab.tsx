@@ -52,7 +52,7 @@ export default function PlayersTab({
   }
 
   return (
-    <div className="rounded-card border border-ink/15 overflow-hidden">
+    <div className="rounded-xl border border-ink/15 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-ink text-sandlight text-left">
           <tr>
@@ -73,7 +73,7 @@ export default function PlayersTab({
                   value={p.level}
                   disabled={busyId === p.id}
                   onChange={(e) => setLevel(p.id, e.target.value as AdminPlayer["level"])}
-                  className="rounded-card border border-ink/20 px-2 py-1 text-xs bg-white"
+                  className="rounded-xl border border-ink/20 px-2 py-1 text-xs bg-white"
                 >
                   {Object.entries(LEVEL_LABEL).map(([value, label]) => (
                     <option key={value} value={value}>

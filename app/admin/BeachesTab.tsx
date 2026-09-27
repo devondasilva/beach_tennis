@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { Wallet, CalendarCheck2, Star, Trophy } from "lucide-react";
+import { BeachStats } from "@/lib/types";
+import { formatFCFA } from "@/lib/pricing";
+import EvolutionChart from "./EvolutionChart";
 
 interface AdminBeachReview {
   id: string;
@@ -32,6 +36,7 @@ export default function BeachesTab() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [reviewsByBeach, setReviewsByBeach] = useState<Record<string, AdminBeachReview[]>>({});
+  const [statsByBeach, setStatsByBeach] = useState<Record<string, BeachStats | undefined>>({});
   const [addImageFiles, setAddImageFiles] = useState<Record<string, FileList | null>>({});
 
   const refresh = useCallback(() => {
@@ -48,6 +53,13 @@ export default function BeachesTab() {
     const res = await fetch(`/api/beaches/${beachId}`);
     const data = await res.json();
     setReviewsByBeach((prev) => ({ ...prev, [beachId]: data.reviews ?? [] }));
+  }
+
+  async function loadStats(beachId: string) {
+    const res = await fetch(`/api/beaches/${beachId}/stats`);
+    if (!res.ok) return;
+    const data = await res.json();
+    setStatsByBeach((prev) => ({ ...prev, [beachId]: data.stats }));
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -150,34 +162,34 @@ export default function BeachesTab() {
       {showForm && (
         <form
           onSubmit={handleCreate}
-          className="rounded-card border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
+          className="rounded-xl border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
         >
           <input
             required
             placeholder="Nom de la plage"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             required
             placeholder="Localisation (ex. Fidjrossè, Cotonou)"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <textarea
             placeholder="Description"
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <input
             placeholder="Équipements, séparés par des virgules"
             value={form.amenities}
             onChange={(e) => setForm({ ...form, amenities: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-ink/60 mb-1">
@@ -195,7 +207,7 @@ export default function BeachesTab() {
           <button
             type="submit"
             disabled={creating}
-            className="sm:col-span-2 rounded-card bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+            className="sm:col-span-2 rounded-xl bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
           >
             {creating ? "Création…" : "Créer la plage"}
           </button>
@@ -207,7 +219,7 @@ export default function BeachesTab() {
       ) : (
         <div className="space-y-3">
           {beaches.map((b) => (
-            <div key={b.id} className="rounded-card border border-ink/15 overflow-hidden">
+            <div key={b.id} className="rounded-xl border border-ink/15 overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-sandlight">
                 <div>
                   <p className="font-semibold text-ink">
@@ -226,7 +238,10 @@ export default function BeachesTab() {
                     onClick={() => {
                       const next = openId === b.id ? null : b.id;
                       setOpenId(next);
-                      if (next) loadReviews(b.id);
+                      if (next) {
+                        loadReviews(b.id);
+                        loadStats(b.id);
+                      }
                     }}
                     className="text-xs font-semibold text-lagoon hover:underline"
                   >
@@ -252,10 +267,63 @@ export default function BeachesTab() {
               {openId === b.id && (
                 <div className="p-4 border-t border-ink/10 space-y-6">
                   <div>
+                    <p className="text-xs font-semibold text-ink/60 mb-2">Statistiques</p>
+                    {(() => {
+                      const s = statsByBeach[b.id];
+                      if (!s) {
+                        return <p className="text-xs text-ink/50">Chargement…</p>;
+                      }
+                      return (
+                        <div className="space-y-5">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div className="rounded-xl bg-sandlight p-3">
+                              <div className="w-7 h-7 rounded-full bg-coral/10 text-coral flex items-center justify-center mb-2">
+                                <Wallet size={14} />
+                              </div>
+                              <p className="text-sm font-semibold text-ink">
+                                {formatFCFA(s.totalRevenue)}
+                              </p>
+                              <p className="text-[11px] text-ink/60">Recettes totales</p>
+                            </div>
+                            <div className="rounded-xl bg-sandlight p-3">
+                              <div className="w-7 h-7 rounded-full bg-lagoon/10 text-lagoondark flex items-center justify-center mb-2">
+                                <CalendarCheck2 size={14} />
+                              </div>
+                              <p className="text-sm font-semibold text-ink">
+                                {s.confirmedBookings} / {s.totalBookings}
+                              </p>
+                              <p className="text-[11px] text-ink/60">Réservations honorées</p>
+                            </div>
+                            <div className="rounded-xl bg-sandlight p-3">
+                              <div className="w-7 h-7 rounded-full bg-sun/20 text-[#854F0B] flex items-center justify-center mb-2">
+                                <Star size={14} />
+                              </div>
+                              <p className="text-sm font-semibold text-ink">
+                                {s.averageRating != null ? `${s.averageRating}/5` : "—"}
+                              </p>
+                              <p className="text-[11px] text-ink/60">{s.reviewsCount} avis</p>
+                            </div>
+                            <div className="rounded-xl bg-sandlight p-3">
+                              <div className="w-7 h-7 rounded-full bg-palm/10 text-palm flex items-center justify-center mb-2">
+                                <Trophy size={14} />
+                              </div>
+                              <p className="text-sm font-semibold text-ink truncate">
+                                {s.topTariff ? s.topTariff.label : "—"}
+                              </p>
+                              <p className="text-[11px] text-ink/60">Tarif le plus réservé</p>
+                            </div>
+                          </div>
+                          <EvolutionChart monthly={s.monthly} />
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  <div>
                     <p className="text-xs font-semibold text-ink/60 mb-2">Photos</p>
                     <div className="flex flex-wrap gap-2">
                       {b.images.map((img) => (
-                        <div key={img} className="relative w-20 h-16 rounded-card overflow-hidden group">
+                        <div key={img} className="relative w-20 h-16 rounded-xl overflow-hidden group">
                           <Image src={img} alt="" fill className="object-cover" />
                           <button
                             onClick={() => handleRemoveImage(b.id, img)}
@@ -295,7 +363,7 @@ export default function BeachesTab() {
                         {(reviewsByBeach[b.id] ?? []).map((r) => (
                           <li
                             key={r.id}
-                            className="flex items-center justify-between text-sm rounded-card bg-sandlight px-3 py-2"
+                            className="flex items-center justify-between text-sm rounded-xl bg-sandlight px-3 py-2"
                           >
                             <span>
                               {r.playerName} — {"★".repeat(r.rating)}

@@ -12,7 +12,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   const placesLeft = event.capacity - event.registrations.length;
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16 grid md:grid-cols-12 gap-12">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 grid md:grid-cols-12 gap-12">
       <div className="md:col-span-7">
         <p className="tag-label mb-3">{event.category}</p>
         <h1 className="font-display text-4xl text-ink">{event.title}</h1>

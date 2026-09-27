@@ -15,6 +15,12 @@ import {
   Level,
   Beach,
   Review,
+  Ad,
+  AdPlacement,
+  Partner,
+  Article,
+  BeachStats,
+  BeachMonthlyStat,
 } from "./types";
 import { verifyPassword } from "./password";
 
@@ -47,6 +53,19 @@ export function verifyAdminCredentials(username: string, password: string): Admi
   if (!admin) return null;
   const ok = verifyPassword(password, admin.passwordHash, admin.passwordSalt);
   return ok ? admin : null;
+}
+
+export function getAdminById(id: string): Admin | undefined {
+  return getAdmins().find((a) => a.id === id);
+}
+
+export function updateAdminPassword(id: string, passwordHash: string, passwordSalt: string): Admin | undefined {
+  const admins = getAdmins();
+  const idx = admins.findIndex((a) => a.id === id);
+  if (idx === -1) return undefined;
+  admins[idx] = { ...admins[idx], passwordHash, passwordSalt };
+  writeJSON("admins.json", admins);
+  return admins[idx];
 }
 
 // ---------- Players ----------
@@ -266,12 +285,32 @@ export function getProductById(id: string): Product | undefined {
   return getProducts().find((p) => p.id === id);
 }
 
-export function createProduct(product: Omit<Product, "id">): Product {
+export function createProduct(
+  product: Omit<Product, "id" | "images"> & { images?: string[] }
+): Product {
   const products = getProducts();
-  const full: Product = { ...product, id: newId("pr") };
+  const full: Product = { ...product, images: product.images ?? [], id: newId("pr") };
   products.push(full);
   writeJSON("products.json", products);
   return full;
+}
+
+export function addProductImages(id: string, imagePaths: string[]): Product | undefined {
+  const products = getProducts();
+  const idx = products.findIndex((p) => p.id === id);
+  if (idx === -1) return undefined;
+  products[idx].images = [...(products[idx].images ?? []), ...imagePaths];
+  writeJSON("products.json", products);
+  return products[idx];
+}
+
+export function removeProductImage(id: string, imagePath: string): Product | undefined {
+  const products = getProducts();
+  const idx = products.findIndex((p) => p.id === id);
+  if (idx === -1) return undefined;
+  products[idx].images = (products[idx].images ?? []).filter((img) => img !== imagePath);
+  writeJSON("products.json", products);
+  return products[idx];
 }
 
 export function updateProduct(
@@ -440,4 +479,181 @@ export function deleteReview(id: string): boolean {
   if (next.length === reviews.length) return false;
   writeJSON("reviews.json", next);
   return true;
+}
+
+// ---------- Publicités (espaces annonceurs) ----------
+export function getAds(): Ad[] {
+  return readJSON<Ad[]>("ads.json");
+}
+
+export function getAdById(id: string): Ad | undefined {
+  return getAds().find((a) => a.id === id);
+}
+
+/** Annonces actives pour un emplacement donné, dans leur fenêtre de diffusion (si définie). */
+export function getActiveAdsByPlacement(placement: AdPlacement): Ad[] {
+  const now = new Date();
+  return getAds().filter((a) => {
+    if (!a.active || a.placement !== placement) return false;
+    if (a.startDate && new Date(a.startDate) > now) return false;
+    if (a.endDate && new Date(a.endDate) < now) return false;
+    return true;
+  });
+}
+
+export function createAd(ad: Omit<Ad, "id" | "createdAt">): Ad {
+  const ads = getAds();
+  const full: Ad = { ...ad, id: newId("ad"), createdAt: new Date().toISOString() };
+  ads.push(full);
+  writeJSON("ads.json", ads);
+  return full;
+}
+
+export function updateAd(id: string, patch: Partial<Omit<Ad, "id" | "createdAt">>): Ad | undefined {
+  const ads = getAds();
+  const idx = ads.findIndex((a) => a.id === id);
+  if (idx === -1) return undefined;
+  ads[idx] = { ...ads[idx], ...patch };
+  writeJSON("ads.json", ads);
+  return ads[idx];
+}
+
+export function deleteAd(id: string): boolean {
+  const ads = getAds();
+  const next = ads.filter((a) => a.id !== id);
+  if (next.length === ads.length) return false;
+  writeJSON("ads.json", next);
+  return true;
+}
+
+// ---------- Statistiques par plage ----------
+const MONTH_LABELS = [
+  "Jan.", "Fév.", "Mars", "Avr.", "Mai", "Juin",
+  "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc.",
+];
+
+/**
+ * Statistiques d'activité d'une plage : recettes, réservations, avis,
+ * et évolution mensuelle sur les `months` derniers mois (recettes des
+ * réservations de terrain, seule activité rattachée à une plage précise).
+ */
+export function getBeachStats(beachId: string, months = 6): BeachStats {
+  const bookings = getBookings().filter((b) => b.beachId === beachId);
+  const notCancelled = bookings.filter((b) => b.status !== "annulee");
+  const cancelled = bookings.filter((b) => b.status === "annulee");
+  const totalRevenue = notCancelled.reduce((sum, b) => sum + b.price, 0);
+
+  const reviews = getReviewsByBeach(beachId);
+  const averageRating =
+    reviews.length > 0
+      ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
+      : null;
+
+  const tariffCounts = new Map<string, number>();
+  for (const b of notCancelled) {
+    tariffCounts.set(b.tariffLabel, (tariffCounts.get(b.tariffLabel) ?? 0) + 1);
+  }
+  let topTariff: BeachStats["topTariff"] = null;
+  for (const [label, count] of tariffCounts) {
+    if (!topTariff || count > topTariff.count) topTariff = { label, count };
+  }
+
+  // Fenêtre glissante des `months` derniers mois, dans l'ordre chronologique.
+  const now = new Date();
+  const monthly: BeachMonthlyStat[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    monthly.push({
+      month: key,
+      label: `${MONTH_LABELS[d.getMonth()]} ${d.getFullYear()}`,
+      revenue: 0,
+      bookings: 0,
+    });
+  }
+  const monthIndex = new Map(monthly.map((m, i) => [m.month, i]));
+  for (const b of notCancelled) {
+    const key = b.date.slice(0, 7); // "YYYY-MM"
+    const idx = monthIndex.get(key);
+    if (idx !== undefined) {
+      monthly[idx].revenue += b.price;
+      monthly[idx].bookings += 1;
+    }
+  }
+
+  return {
+    beachId,
+    totalRevenue,
+    totalBookings: bookings.length,
+    confirmedBookings: notCancelled.length,
+    cancelledBookings: cancelled.length,
+    averageTicket: notCancelled.length > 0 ? Math.round(totalRevenue / notCancelled.length) : 0,
+    reviewsCount: reviews.length,
+    averageRating,
+    topTariff,
+    monthly,
+  };
+}
+
+// ---------- Partenaires (logos affichés sur le site) ----------
+export function getPartners(): Partner[] {
+  return readJSON<Partner[]>("partners.json");
+}
+
+export function createPartner(partner: Omit<Partner, "id" | "createdAt">): Partner {
+  const partners = getPartners();
+  const full: Partner = { ...partner, id: newId("pt"), createdAt: new Date().toISOString() };
+  partners.push(full);
+  writeJSON("partners.json", partners);
+  return full;
+}
+
+export function deletePartner(id: string): Partner | undefined {
+  const partners = getPartners();
+  const found = partners.find((p) => p.id === id);
+  const next = partners.filter((p) => p.id !== id);
+  if (next.length === partners.length) return undefined;
+  writeJSON("partners.json", next);
+  return found;
+}
+
+// ---------- Actualités & revue de presse ----------
+export function getArticles(): Article[] {
+  return readJSON<Article[]>("articles.json")
+    .map((a) => ({ ...a, featured: a.featured ?? false })) // rétrocompatible
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
+export function getFeaturedArticles(limit = 3): Article[] {
+  return getArticles().filter((a) => a.featured).slice(0, limit);
+}
+
+export function getArticleById(id: string): Article | undefined {
+  return getArticles().find((a) => a.id === id);
+}
+
+export function createArticle(article: Omit<Article, "id" | "createdAt">): Article {
+  const articles = readJSON<Article[]>("articles.json");
+  const full: Article = { ...article, id: newId("art"), createdAt: new Date().toISOString() };
+  articles.push(full);
+  writeJSON("articles.json", articles);
+  return full;
+}
+
+export function setArticleFeatured(id: string, featured: boolean): Article | undefined {
+  const articles = readJSON<Article[]>("articles.json");
+  const idx = articles.findIndex((a) => a.id === id);
+  if (idx === -1) return undefined;
+  articles[idx] = { ...articles[idx], featured };
+  writeJSON("articles.json", articles);
+  return articles[idx];
+}
+
+export function deleteArticle(id: string): Article | undefined {
+  const articles = readJSON<Article[]>("articles.json");
+  const found = articles.find((a) => a.id === id);
+  const next = articles.filter((a) => a.id !== id);
+  if (next.length === articles.length) return undefined;
+  writeJSON("articles.json", next);
+  return found;
 }

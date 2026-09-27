@@ -32,7 +32,7 @@ export default function LessonsTab({
   }
 
   return (
-    <div className="rounded-card border border-ink/15 overflow-hidden">
+    <div className="rounded-xl border border-ink/15 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-ink text-sandlight text-left">
           <tr>

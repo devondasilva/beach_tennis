@@ -5,7 +5,8 @@
     "category": "Raquettes",
     "price": 12000,
     "description": "Raquette en fibre de carbone légère, idéale pour débuter et progresser rapidement.",
-    "stock": 18
+    "stock": 18,
+    "images": []
   },
   {
     "id": "raq-02",
@@ -13,7 +14,8 @@
     "category": "Raquettes",
     "price": 22000,
     "description": "Raquette au toucher précis pour les joueurs confirmés, noyau EVA haute densité.",
-    "stock": 10
+    "stock": 10,
+    "images": []
   },
   {
     "id": "balles-01",
@@ -21,7 +23,8 @@
     "category": "Balles",
     "price": 5000,
     "description": "Balles basse pression spécial sable, homologuées compétition.",
-    "stock": 40
+    "stock": 40,
+    "images": []
   },
   {
     "id": "sac-01",
@@ -29,7 +32,8 @@
     "category": "Accessoires",
     "price": 9000,
     "description": "Sac imperméable avec compartiment raquette, pensé pour le sable et l'humidité.",
-    "stock": 15
+    "stock": 15,
+    "images": []
   },
   {
     "id": "tenue-01",
@@ -37,7 +41,8 @@
     "category": "Tenues",
     "price": 6000,
     "description": "T-shirt respirant séchage rapide, coupe unisexe, floqué du logo du club.",
-    "stock": 25
+    "stock": 25,
+    "images": []
   },
   {
     "id": "casquette-01",
@@ -45,6 +50,7 @@
     "category": "Accessoires",
     "price": 4000,
     "description": "Protection solaire légère, ajustable, pour jouer confortablement en pleine journée.",
-    "stock": 30
+    "stock": 30,
+    "images": []
   }
 ]

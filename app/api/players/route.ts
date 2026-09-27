@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayers, findOrCreatePlayer } from "@/lib/db";
+import { getServerSession } from "@/lib/auth";
 import { Level } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const players = getPlayers().sort((a, b) => b.loyaltyPoints - a.loyaltyPoints);
+  // Réservé aux utilisateurs connectés (joueur ou admin), comme le classement.
+  const session = await getServerSession();
+  if (!session) {
+    return NextResponse.json({ error: "Connexion requise." }, { status: 401 });
+  }
+
+  // Jamais le numéro de téléphone dans cette liste, même connecté : il ne
+  // sert à rien pour un classement et ne doit pas être exposé au client.
+  const players = getPlayers()
+    .sort((a, b) => b.loyaltyPoints - a.loyaltyPoints)
+    .map(({ id, name, level, loyaltyPoints, createdAt }) => ({
+      id,
+      name,
+      level,
+      loyaltyPoints,
+      createdAt,
+    }));
   return NextResponse.json({ players });
 }
 

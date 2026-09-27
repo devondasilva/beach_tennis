@@ -25,6 +25,9 @@ import GallerySunset from "@/components/illustrations/GallerySunset";
 import GalleryTournoi from "@/components/illustrations/GalleryTournoi";
 import GalleryCoaching from "@/components/illustrations/GalleryCoaching";
 import GalleryEquipement from "@/components/illustrations/GalleryEquipement";
+import AdBanner from "@/components/AdBanner";
+import PartnerLogos from "@/components/PartnerLogos";
+import FeaturedArticles from "@/components/FeaturedArticles";
 
 /* ------------------------------------------------------------------ */
 /*  DONNÉES                                                           */
@@ -208,6 +211,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------ ESPACE PUBLICITAIRE ------------------------------ */}
+      <section className="max-w-content mx-auto px-6 pt-16 md:pt-20">
+        <AdBanner placement="accueil" />
+      </section>
+
       {/* ------------------------------ ACTIVITÉS — SPLITS ALTERNÉS ------------------------------ */}
       <section id="activites" className="py-28 md:py-32 space-y-28 md:space-y-32">
         {ACTIVITES.map((a, i) => (
@@ -264,7 +272,7 @@ export default function HomePage() {
       <section className="max-w-content mx-auto px-6 pb-8">
         <div className="rounded-[2rem] border border-ink/10 bg-white p-6 flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-ink/60 font-semibold">
-            Et aussi : la boutique d&rsquo;accessoires, le classement des joueurs et votre carte membre.
+            Et aussi : la boutique d&rsquo;accessoires, le classement des joueurs et nos actualités.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -280,16 +288,18 @@ export default function HomePage() {
               Classement
             </Link>
             <Link
-              href="/profil"
+              href="/actualites"
               className="text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-ink/15 hover:border-coral hover:text-coral transition-colors"
             >
-              Mon profil
+              Actualités
             </Link>
           </div>
         </div>
       </section>
 
       {/* ------------------------------ GALERIE HORIZONTALE ------------------------------ */}
+      <FeaturedArticles />
+      <PartnerLogos />
       <section id="galerie" className="py-8 pb-28 md:pb-32">
         <div className="max-w-content mx-auto px-6 mb-10">
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">
@@ -431,7 +441,7 @@ export default function HomePage() {
                   <Mail size={16} className="text-sun" /> contact@beachtennisbenin.bj
                 </p>
                 <p className="flex items-center gap-3">
-                  <Phone size={16} className="text-sun" /> +229 XX XX XX XX
+                  <Phone size={16} className="text-sun" /> +229 01 93 23 06 23
                 </p>
                 <p className="flex items-center gap-3">
                   <MapPin size={16} className="text-sun" /> Plages de Cotonou, Bénin

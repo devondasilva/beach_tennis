@@ -61,7 +61,7 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
 
   if (notFound) {
     return (
-      <div className="max-w-content mx-auto px-6 py-16">
+      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
         <p className="text-ink/70">
           Cette plage est introuvable.{" "}
           <Link href="/plages" className="text-coral font-semibold hover:underline">
@@ -74,11 +74,11 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
   }
 
   if (!beach) {
-    return <div className="max-w-content mx-auto px-6 py-16">Chargement…</div>;
+    return <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">Chargement…</div>;
   }
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
       <div className="grid md:grid-cols-12 gap-12">
         <div className="md:col-span-7">
           {beach.images.length > 0 ? (

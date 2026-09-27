@@ -11,6 +11,7 @@ const links = [
   { href: "/reservation", label: "Réserver" },
   { href: "/cours", label: "Cours" },
   { href: "/evenements", label: "Événements" },
+  { href: "/actualites", label: "Actualités" },
   { href: "/boutique", label: "Boutique" },
   { href: "/classement", label: "Classement" },
 ];
@@ -236,15 +237,34 @@ export default function Navbar() {
               ))}
             </nav>
 
-            {/* BOUTON PROFIL DESKTOP */}
-            <div className="hidden md:flex items-center gap-4">
-              <Link
-                href="/profil"
-                className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest hover:text-sun transition-colors text-sandlight/90"
-              >
-                <UserCircle size={20} />
-                Mon Compte
-              </Link>
+            {/* BOUTON COMPTE DESKTOP */}
+            <div className="hidden md:flex items-center gap-3">
+              {sessionLoaded && session ? (
+                <>
+                  <Link
+                    href={session.role === "admin" ? "/admin" : "/profil"}
+                    className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest hover:text-sun transition-colors text-sandlight/90"
+                  >
+                    <UserCircle size={20} />
+                    {session.role === "admin" ? "Tableau de bord" : "Mon espace"}
+                  </Link>
+                  <span className="text-sandlight/20">|</span>
+                  <button
+                    onClick={handleLogout}
+                    className="text-xs font-semibold uppercase tracking-widest text-sandlight/50 hover:text-coral transition-colors"
+                  >
+                    Déconnexion
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest hover:text-sun transition-colors text-sandlight/90"
+                >
+                  <UserCircle size={20} />
+                  Connexion
+                </Link>
+              )}
             </div>
 
             {/* BOUTON HAMBURGER MOBILE */}
@@ -323,7 +343,7 @@ export default function Navbar() {
                   className="flex w-full items-center justify-center gap-3 rounded-full bg-sandlight/10 active:bg-sandlight/20 py-4 min-h-[56px] text-lg font-semibold text-sandlight touch-manipulation"
                 >
                   <UserCircle size={24} />
-                  {session.role === "admin" ? "Tableau de bord" : "Mon Espace"}
+                  {session.role === "admin" ? "Tableau de bord" : "Mon espace"}
                 </Link>
               ) : (
                 // Utilisateur non connecté

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formatFCFA } from "@/lib/pricing";
 
 interface Player {
@@ -53,109 +53,102 @@ const LEVEL_LABEL: Record<string, string> = {
 };
 
 export default function ProfilClient() {
+  const router = useRouter();
   const params = useSearchParams();
-  const initialId = params.get("playerId") ?? "";
+  const explicitId = params.get("playerId") ?? "";
 
-  const [phone, setPhone] = useState("");
+  const [isOwnSession, setIsOwnSession] = useState(false);
+  const [resolvedId, setResolvedId] = useState<string | null>(explicitId || null);
+  const [resolving, setResolving] = useState(!explicitId);
+
   const [data, setData] = useState<ProfileData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function loadById(id: string) {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/players/${id}`);
-      const d = await res.json();
-      if (!res.ok) {
-        setError(d.error ?? "Profil introuvable.");
-        return;
-      }
-      setData(d);
-    } finally {
-      setLoading(false);
-    }
-  }
-
+  // Si aucun lien personnel n'est fourni dans l'URL, on regarde s'il existe
+  // une session joueur active (connecté via /login) pour charger son propre profil.
   useEffect(() => {
-    if (initialId) {
-      loadById(initialId);
-      return;
-    }
-    // Pas d'id en paramètre : on tente de retrouver la session joueur active.
+    if (explicitId) return;
+    let cancelled = false;
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((d) => {
+        if (cancelled) return;
         if (d.session?.role === "player") {
-          loadById(d.session.id);
+          setIsOwnSession(true);
+          setResolvedId(d.session.id);
         }
+      })
+      .finally(() => {
+        if (!cancelled) setResolving(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [explicitId]);
+
+  useEffect(() => {
+    if (!resolvedId) return;
+    setLoading(true);
+    setError(null);
+    fetch(`/api/players/${resolvedId}`)
+      .then(async (res) => {
+        const d = await res.json();
+        if (!res.ok) {
+          setError(d.error ?? "Profil introuvable.");
+          return;
+        }
+        setData(d);
+      })
+      .finally(() => setLoading(false));
+  }, [resolvedId]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    setData(null);
+    router.push("/login");
+    router.refresh();
   }
 
-  async function handleLookup(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/players");
-      const d = await res.json();
-      const match = (d.players as Player[]).find((p) => p.phone === phone.trim());
-      if (!match) {
-        setError("Aucun profil ne correspond à ce numéro. Réservez une première séance pour en créer un.");
-        setData(null);
-        return;
-      }
-      await loadById(match.id);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (!data) {
+  if (resolving) {
     return (
-      <div className="max-w-content mx-auto px-6 py-16">
+      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 text-ink/60">
+        Chargement…
+      </div>
+    );
+  }
+
+  if (!resolvedId) {
+    return (
+      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
         <div className="max-w-md">
           <p className="tag-label mb-3">Mon profil</p>
           <h1 className="font-display text-4xl text-ink">Retrouvez votre espace</h1>
           <p className="mt-3 text-ink/70">
-            Entrez le numéro de téléphone utilisé lors d&rsquo;une réservation pour
-            afficher votre QR code, vos points et votre historique.
+            Connectez-vous depuis la page de connexion, ou utilisez le lien personnel
+            (QR code, points de fidélité, historique) reçu après une réservation, un
+            cours, une commande ou une inscription à un événement.
           </p>
-          <p className="mt-2 text-sm text-ink/50">
-            Ou{" "}
-            <a href="/login" className="text-coral font-semibold hover:underline">
-              connectez-vous depuis la page de connexion
-            </a>
-            .
-          </p>
-          <form onSubmit={handleLookup} className="mt-8 space-y-3">
-            <input
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+229 97 00 00 00"
-              className="w-full rounded-card border border-ink/20 px-3 py-2 bg-white"
-            />
-            {error && (
-              <p className="text-sm text-coral bg-coral/10 rounded-card px-4 py-3">
-                {error}
-              </p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-card bg-coral text-white font-semibold px-6 py-3 hover:bg-ink transition-colors disabled:opacity-60"
-            >
-              {loading ? "Recherche…" : "Afficher mon profil"}
-            </button>
-          </form>
+          <a
+            href="/login"
+            className="mt-6 inline-block rounded-card bg-ink text-white font-semibold px-6 py-3 hover:bg-coral transition-colors"
+          >
+            Se connecter
+          </a>
         </div>
+      </div>
+    );
+  }
+
+  if (loading || !data) {
+    return (
+      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 text-ink/60">
+        {error ? (
+          <p className="text-sm text-coral bg-coral/10 rounded-card px-4 py-3 inline-block">
+            {error}
+          </p>
+        ) : (
+          "Chargement…"
+        )}
       </div>
     );
   }
@@ -163,7 +156,7 @@ export default function ProfilClient() {
   const { player, bookings, lessons, orders, events } = data;
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
       <div className="grid md:grid-cols-12 gap-10">
         <div className="md:col-span-4">
           <div className="rounded-card bg-ink text-sandlight p-6 text-center">
@@ -188,12 +181,15 @@ export default function ProfilClient() {
             <p className="text-xs text-sandlight/60 mt-1">
               200 points = une séance offerte
             </p>
-            <button
-              onClick={handleLogout}
-              className="mt-4 text-xs font-semibold uppercase tracking-widest text-sandlight/50 hover:text-coral transition-colors"
-            >
-              Se déconnecter
-            </button>
+
+            {isOwnSession && (
+              <button
+                onClick={handleLogout}
+                className="mt-5 text-xs font-bold uppercase tracking-widest text-sandlight/70 hover:text-coral transition-colors"
+              >
+                Se déconnecter
+              </button>
+            )}
           </div>
         </div>
 

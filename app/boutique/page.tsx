@@ -1,6 +1,9 @@
+import Image from "next/image";
+import { ShoppingBag } from "lucide-react";
 import { getProducts } from "@/lib/db";
 import { formatFCFA } from "@/lib/pricing";
 import OrderForm from "./OrderForm";
+import AdBanner from "@/components/AdBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +12,7 @@ export default function BoutiquePage() {
   const categories = Array.from(new Set(products.map((p) => p.category)));
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
       <div className="max-w-xl">
         <p className="tag-label mb-3">Boutique</p>
         <h1 className="font-display text-4xl text-ink">
@@ -21,6 +24,8 @@ export default function BoutiquePage() {
         </p>
       </div>
 
+      <AdBanner placement="boutique" className="mt-10" />
+
       {categories.map((cat) => (
         <div key={cat} className="mt-12">
           <h2 className="font-display text-xl text-ink border-b border-ink/10 pb-2">
@@ -30,7 +35,23 @@ export default function BoutiquePage() {
             {products
               .filter((p) => p.category === cat)
               .map((p) => (
-                <div key={p.id} className="rounded-card border border-ink/15 p-5">
+                <div key={p.id} className="rounded-card border border-ink/15 overflow-hidden">
+                  <div className="relative w-full aspect-[4/3] bg-sandlight">
+                    {p.images && p.images.length > 0 ? (
+                      <Image
+                        src={p.images[0]}
+                        alt={p.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full text-ink/25">
+                        <ShoppingBag size={32} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5">
                   <p className="font-semibold text-ink">{p.name}</p>
                   <p className="mt-1 text-sm text-ink/60 leading-relaxed">
                     {p.description}
@@ -44,6 +65,7 @@ export default function BoutiquePage() {
                     </span>
                   </div>
                   <OrderForm product={p} />
+                  </div>
                 </div>
               ))}
           </div>

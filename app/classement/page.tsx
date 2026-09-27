@@ -1,4 +1,5 @@
 import { getPlayers } from "@/lib/db";
+import { getServerSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -8,13 +9,36 @@ const LEVEL_LABEL: Record<string, string> = {
   confirme: "Confirmé",
 };
 
-export default function ClassementPage() {
+export default async function ClassementPage() {
+  const session = await getServerSession();
+
+  if (!session) {
+    return (
+      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
+        <div className="max-w-md">
+          <p className="tag-label mb-3">Classement</p>
+          <h1 className="font-display text-4xl text-ink">Réservé aux membres connectés</h1>
+          <p className="mt-3 text-ink/70">
+            Connecte-toi avec ton nom et ton numéro de téléphone pour voir le ladder des
+            joueurs et suivre tes points de fidélité.
+          </p>
+          <a
+            href="/login?next=/classement"
+            className="mt-6 inline-block rounded-card bg-ink text-white font-semibold px-6 py-3 hover:bg-coral transition-colors"
+          >
+            Se connecter
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   const players = getPlayers()
     .slice()
     .sort((a, b) => b.loyaltyPoints - a.loyaltyPoints);
 
   return (
-    <div className="max-w-content mx-auto px-6 py-16">
+    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
       <div className="max-w-xl">
         <p className="tag-label mb-3">Classement</p>
         <h1 className="font-display text-4xl text-ink">Le ladder des joueurs</h1>

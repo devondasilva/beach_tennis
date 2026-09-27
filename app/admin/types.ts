@@ -52,6 +52,42 @@ export interface AdminProduct {
   price: number;
   description: string;
   stock: number;
+  images: string[];
+}
+
+export interface AdminAd {
+  id: string;
+  advertiser: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  placement: "accueil" | "boutique" | "evenements" | "cours";
+  active: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  createdAt: string;
+}
+
+export interface AdminPartner {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl: string | null;
+  createdAt: string;
+}
+
+export interface AdminArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: "actualite" | "revue_presse";
+  imageUrl: string | null;
+  sourceUrl: string | null;
+  sourceName: string | null;
+  featured: boolean;
+  publishedAt: string;
+  createdAt: string;
 }
 
 export interface AdminPlayer {

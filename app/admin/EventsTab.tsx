@@ -97,28 +97,28 @@ export default function EventsTab({
       {showForm && (
         <form
           onSubmit={handleCreate}
-          className="rounded-card border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
+          className="rounded-xl border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
         >
           <input
             required
             placeholder="Titre"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <input
             required
             type="date"
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             required
             placeholder="Catégorie (ex. Confirmés)"
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             type="number"
@@ -126,7 +126,7 @@ export default function EventsTab({
             placeholder="Frais d'inscription (FCFA)"
             value={form.entryFee}
             onChange={(e) => setForm({ ...form, entryFee: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             required
@@ -135,26 +135,26 @@ export default function EventsTab({
             placeholder="Capacité"
             value={form.capacity}
             onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             placeholder="Dotation"
             value={form.prize}
             onChange={(e) => setForm({ ...form, prize: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <textarea
             placeholder="Description"
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           {error && <p className="text-xs text-coral sm:col-span-2">{error}</p>}
           <button
             type="submit"
             disabled={creating}
-            className="sm:col-span-2 rounded-card bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+            className="sm:col-span-2 rounded-xl bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
           >
             {creating ? "Création…" : "Créer l'événement"}
           </button>
@@ -166,7 +166,7 @@ export default function EventsTab({
       ) : (
         <div className="space-y-3">
           {events.map((e) => (
-            <div key={e.id} className="rounded-card border border-ink/15 overflow-hidden">
+            <div key={e.id} className="rounded-xl border border-ink/15 overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-sandlight">
                 <div>
                   <p className="font-semibold text-ink">{e.title}</p>

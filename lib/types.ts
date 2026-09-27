@@ -86,6 +86,46 @@ export interface Product {
   price: number;
   description: string;
   stock: number;
+  images: string[]; // chemins publics, ex. "/uploads/products/xxx.jpg"
+}
+
+export type AdPlacement = "accueil" | "boutique" | "evenements" | "cours";
+
+export interface Ad {
+  id: string;
+  advertiser: string;
+  title: string;
+  imageUrl: string;
+  targetUrl: string;
+  placement: AdPlacement;
+  active: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  createdAt: string;
+}
+
+export interface Partner {
+  id: string;
+  name: string;
+  logoUrl: string;
+  websiteUrl: string | null;
+  createdAt: string;
+}
+
+export type ArticleCategory = "actualite" | "revue_presse";
+
+export interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: ArticleCategory;
+  imageUrl: string | null;
+  sourceUrl: string | null; // lien vers l'article original, pour une revue de presse
+  sourceName: string | null; // nom du média, pour une revue de presse
+  featured: boolean; // mis en avant sur la page d'accueil
+  publishedAt: string;
+  createdAt: string;
 }
 
 export interface OrderItem {
@@ -130,5 +170,25 @@ export interface Review {
   rating: number; // 1 à 5
   comment: string;
   createdAt: string;
+}
+
+export interface BeachMonthlyStat {
+  month: string; // "2026-01"
+  label: string; // "Jan. 2026"
+  revenue: number;
+  bookings: number;
+}
+
+export interface BeachStats {
+  beachId: string;
+  totalRevenue: number;
+  totalBookings: number;
+  confirmedBookings: number;
+  cancelledBookings: number;
+  averageTicket: number;
+  reviewsCount: number;
+  averageRating: number | null;
+  topTariff: { label: string; count: number } | null;
+  monthly: BeachMonthlyStat[];
 }
 

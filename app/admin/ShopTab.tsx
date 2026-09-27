@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
+import Image from "next/image";
 import { AdminProduct } from "./types";
 
 const emptyForm = { name: "", category: "", price: "", stock: "", description: "" };
@@ -14,10 +15,13 @@ export default function ShopTab({
 }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [files, setFiles] = useState<FileList | null>(null);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, { price: string; stock: string }>>({});
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [addImageFiles, setAddImageFiles] = useState<Record<string, FileList | null>>({});
 
   function editValue(p: AdminProduct, field: "price" | "stock") {
     return edits[p.id]?.[field] ?? String(p[field]);
@@ -65,27 +69,56 @@ export default function ShopTab({
     setError(null);
     setCreating(true);
     try {
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          category: form.category,
-          price: Number(form.price) || 0,
-          stock: Number(form.stock) || 0,
-          description: form.description,
-        }),
-      });
+      const fd = new FormData();
+      fd.set("name", form.name);
+      fd.set("category", form.category);
+      fd.set("price", form.price);
+      fd.set("stock", form.stock);
+      fd.set("description", form.description);
+      if (files) {
+        Array.from(files).forEach((f) => fd.append("images", f));
+      }
+      const res = await fetch("/api/products", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Une erreur est survenue.");
         return;
       }
       setForm(emptyForm);
+      setFiles(null);
       setShowForm(false);
       onChanged();
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleAddImages(productId: string) {
+    const fl = addImageFiles[productId];
+    if (!fl || fl.length === 0) return;
+    setBusyId(productId);
+    try {
+      const fd = new FormData();
+      Array.from(fl).forEach((f) => fd.append("images", f));
+      await fetch(`/api/products/${productId}/images`, { method: "POST", body: fd });
+      setAddImageFiles((prev) => ({ ...prev, [productId]: null }));
+      onChanged();
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleRemoveImage(productId: string, imgPath: string) {
+    setBusyId(productId);
+    try {
+      await fetch(`/api/products/${productId}/images`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: imgPath }),
+      });
+      onChanged();
+    } finally {
+      setBusyId(null);
     }
   }
 
@@ -103,21 +136,21 @@ export default function ShopTab({
       {showForm && (
         <form
           onSubmit={handleCreate}
-          className="rounded-card border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
+          className="rounded-xl border border-ink/15 p-5 grid sm:grid-cols-2 gap-3"
         >
           <input
             required
             placeholder="Nom du produit"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <input
             required
             placeholder="Catégorie"
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             required
@@ -126,7 +159,7 @@ export default function ShopTab({
             placeholder="Prix (FCFA)"
             value={form.price}
             onChange={(e) => setForm({ ...form, price: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm"
           />
           <input
             required
@@ -135,20 +168,32 @@ export default function ShopTab({
             placeholder="Stock"
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
           <textarea
             placeholder="Description"
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="rounded-card border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
+            className="rounded-xl border border-ink/20 px-3 py-2 text-sm sm:col-span-2"
           />
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-ink/60 mb-1">
+              Photos (JPEG, PNG, WEBP — 8 Mo max chacune)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setFiles(e.target.files)}
+              className="text-sm"
+            />
+          </div>
           {error && <p className="text-xs text-coral sm:col-span-2">{error}</p>}
           <button
             type="submit"
             disabled={creating}
-            className="sm:col-span-2 rounded-card bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+            className="sm:col-span-2 rounded-xl bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
           >
             {creating ? "Création…" : "Ajouter le produit"}
           </button>
@@ -158,7 +203,7 @@ export default function ShopTab({
       {products.length === 0 ? (
         <p className="text-sm text-ink/60">Aucun produit dans le catalogue.</p>
       ) : (
-        <div className="rounded-card border border-ink/15 overflow-hidden">
+        <div className="rounded-xl border border-ink/15 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-ink text-sandlight text-left">
               <tr>
@@ -166,51 +211,105 @@ export default function ShopTab({
                 <th className="px-4 py-3 font-semibold">Catégorie</th>
                 <th className="px-4 py-3 font-semibold">Prix</th>
                 <th className="px-4 py-3 font-semibold">Stock</th>
+                <th className="px-4 py-3 font-semibold">Photos</th>
                 <th className="px-4 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.map((p, i) => (
-                <tr key={p.id} className={i % 2 === 0 ? "bg-sandlight" : "bg-sand/40"}>
-                  <td className="px-4 py-3">{p.name}</td>
-                  <td className="px-4 py-3 text-ink/60">{p.category}</td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="number"
-                      min={0}
-                      value={editValue(p, "price")}
-                      onChange={(e) => setEdit(p.id, "price", e.target.value)}
-                      className="w-24 rounded-card border border-ink/20 px-2 py-1"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="number"
-                      min={0}
-                      value={editValue(p, "stock")}
-                      onChange={(e) => setEdit(p.id, "stock", e.target.value)}
-                      className="w-20 rounded-card border border-ink/20 px-2 py-1"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-3">
+                <Fragment key={p.id}>
+                  <tr className={i % 2 === 0 ? "bg-sandlight" : "bg-sand/40"}>
+                    <td className="px-4 py-3">{p.name}</td>
+                    <td className="px-4 py-3 text-ink/60">{p.category}</td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="number"
+                        min={0}
+                        value={editValue(p, "price")}
+                        onChange={(e) => setEdit(p.id, "price", e.target.value)}
+                        className="w-24 rounded-xl border border-ink/20 px-2 py-1"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="number"
+                        min={0}
+                        value={editValue(p, "stock")}
+                        onChange={(e) => setEdit(p.id, "stock", e.target.value)}
+                        className="w-20 rounded-xl border border-ink/20 px-2 py-1"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
                       <button
-                        disabled={busyId === p.id}
-                        onClick={() => handleSave(p.id)}
-                        className="text-xs font-semibold text-lagoon hover:underline disabled:opacity-50"
+                        onClick={() => setOpenId(openId === p.id ? null : p.id)}
+                        className="text-xs font-semibold text-lagoon hover:underline"
                       >
-                        Enregistrer
+                        {(p.images ?? []).length} photo(s)
                       </button>
-                      <button
-                        disabled={busyId === p.id}
-                        onClick={() => handleDelete(p.id)}
-                        className="text-xs font-semibold text-coral hover:underline disabled:opacity-50"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-3">
+                        <button
+                          disabled={busyId === p.id}
+                          onClick={() => handleSave(p.id)}
+                          className="text-xs font-semibold text-lagoon hover:underline disabled:opacity-50"
+                        >
+                          Enregistrer
+                        </button>
+                        <button
+                          disabled={busyId === p.id}
+                          onClick={() => handleDelete(p.id)}
+                          className="text-xs font-semibold text-coral hover:underline disabled:opacity-50"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {openId === p.id && (
+                    <tr key={`${p.id}-photos`} className="bg-white">
+                      <td colSpan={6} className="px-4 py-4 border-t border-ink/10">
+                        <p className="text-xs font-semibold text-ink/60 mb-2">
+                          Photos de « {p.name} »
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {(p.images ?? []).map((img) => (
+                            <div key={img} className="relative w-20 h-16 rounded-xl overflow-hidden group">
+                              <Image src={img} alt="" fill className="object-cover" />
+                              <button
+                                onClick={() => handleRemoveImage(p.id, img)}
+                                className="absolute inset-0 bg-black/50 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                Retirer
+                              </button>
+                            </div>
+                          ))}
+                          {(p.images ?? []).length === 0 && (
+                            <p className="text-xs text-ink/50">Aucune photo pour ce produit.</p>
+                          )}
+                        </div>
+                        <div className="mt-3 flex items-center gap-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) =>
+                              setAddImageFiles((prev) => ({ ...prev, [p.id]: e.target.files }))
+                            }
+                            className="text-xs"
+                          />
+                          <button
+                            disabled={busyId === p.id}
+                            onClick={() => handleAddImages(p.id)}
+                            className="text-xs font-semibold text-lagoon hover:underline disabled:opacity-50"
+                          >
+                            Ajouter
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
             </tbody>
           </table>
