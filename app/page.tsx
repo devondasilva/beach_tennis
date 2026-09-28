@@ -16,18 +16,13 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import IllustrationBlock from "@/components/illustrations/IllustrationBlock";
-import HeroScene from "@/components/illustrations/HeroScene";
-import ActivityJeuLibre from "@/components/illustrations/ActivityJeuLibre";
-import ActivityCoaching from "@/components/illustrations/ActivityCoaching";
-import ActivityTournoi from "@/components/illustrations/ActivityTournoi";
-import GallerySunset from "@/components/illustrations/GallerySunset";
-import GalleryTournoi from "@/components/illustrations/GalleryTournoi";
-import GalleryCoaching from "@/components/illustrations/GalleryCoaching";
-import GalleryEquipement from "@/components/illustrations/GalleryEquipement";
+import HomeImage from "@/components/HomeImage";
+import { HOME_IMAGES } from "@/lib/home-images";
 import AdBanner from "@/components/AdBanner";
 import PartnerLogos from "@/components/PartnerLogos";
 import FeaturedArticles from "@/components/FeaturedArticles";
+import ContactForm from "@/components/ContactForm";
+import BeachesShowcase from "@/components/BeachesShowcase";
 
 /* ------------------------------------------------------------------ */
 /*  DONNÉES                                                           */
@@ -45,31 +40,26 @@ const ACTIVITES = [
     tag: "Jeu libre & forfaits",
     title: "Un terrain équipé, un coach, votre créneau du week-end.",
     desc: "Séance découverte, forfait duo, famille ou groupe : réservez votre créneau, réglez en ligne et recevez votre QR code d'accès immédiat.",
-    Illustration: ActivityJeuLibre,
+    image: HOME_IMAGES.activites.jeuLibre,
     cta: { href: "/reservation", label: "Réserver un créneau" },
   },
   {
     tag: "Coaching individuel",
     title: "Progressez avec un coach dédié, à votre rythme.",
     desc: "Cours particulier ou en petit groupe, en semaine comme le week-end : le coach adapte chaque séance à votre niveau et à vos objectifs.",
-    Illustration: ActivityCoaching,
+    image: HOME_IMAGES.activites.coaching,
     cta: { href: "/cours", label: "Réserver un cours" },
   },
   {
-    tag: "Tournois mensuels",
-    title: "Un rendez-vous chaque mois, des dotations à la clé.",
+    tag: "Événements",
+    title: "Des rendez-vous sur le sable, des dotations à la clé.",
     desc: "Inscription en ligne, catégories débutants et confirmés, ambiance de plage et prix pour les gagnants — le classement vit toute l'année.",
-    Illustration: ActivityTournoi,
-    cta: { href: "/evenements", label: "Voir le prochain tournoi" },
+    image: HOME_IMAGES.activites.evenements,
+    cta: { href: "/evenements", label: "Voir les événements" },
   },
 ];
 
-const GALERIE = [
-  { name: "Fin de journée", Illustration: GallerySunset },
-  { name: "Tournoi du mois", Illustration: GalleryTournoi },
-  { name: "Coaching", Illustration: GalleryCoaching },
-  { name: "Équipement", Illustration: GalleryEquipement },
-];
+const GALERIE = HOME_IMAGES.galerie;
 
 const FORMULES = [
   {
@@ -79,7 +69,7 @@ const FORMULES = [
   },
   {
     title: "Joueurs réguliers",
-    desc: "Carte 10 séances, abonnement week-end illimité et accès prioritaire aux inscriptions des tournois mensuels.",
+    desc: "Carte 10 séances, abonnement week-end illimité et accès prioritaire aux inscriptions des événements.",
     icon: <Trophy size={20} />,
   },
 ];
@@ -94,10 +84,13 @@ export default function HomePage() {
       {/* ------------------------------ NOUVEAU HERO REDESIGNÉ ------------------------------ */}
       <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 bg-ink text-white">
         {/* Fond d'illustration avec superposition sombre et subtil dégradé corail/soleil */}
-        <div className="absolute inset-0 opacity-40 mix-blend-luminosity">
-          <IllustrationBlock
-            Illustration={HeroScene}
-            className="w-full h-full object-cover"
+        <div className="absolute inset-0 opacity-60">
+          <HomeImage
+            src={HOME_IMAGES.hero.src}
+            alt={HOME_IMAGES.hero.alt}
+            className="w-full h-full"
+            sizes="100vw"
+            priority
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 to-ink/60" />
@@ -138,7 +131,7 @@ export default function HomePage() {
                 href="/evenements"
                 className="px-8 py-4 bg-white/10 border border-white/20 text-white uppercase tracking-widest rounded-2xl hover:bg-white/20 transition-all backdrop-blur-sm"
               >
-                Découvrir les cours
+                Découvrir les événements
               </Link>
             </div>
           </motion.div>
@@ -211,6 +204,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------ VOIR NOS PLAGES ------------------------------ */}
+      <BeachesShowcase />
+
       {/* ------------------------------ ESPACE PUBLICITAIRE ------------------------------ */}
       <section className="max-w-content mx-auto px-6 pt-16 md:pt-20">
         <AdBanner placement="accueil" />
@@ -254,9 +250,11 @@ export default function HomePage() {
               transition={{ duration: 0.7 }}
               className="lg:col-span-7"
             >
-              <IllustrationBlock
-                Illustration={a.Illustration}
+              <HomeImage
+                src={a.image.src}
+                alt={a.image.alt}
                 className="aspect-[16/10]"
+                sizes="(max-width: 1024px) 100vw, 58vw"
                 clipPath={
                   i % 2 === 0
                     ? "polygon(0 0, 100% 0, 100% 100%, 6% 100%)"
@@ -311,15 +309,17 @@ export default function HomePage() {
         </div>
         <div className="max-w-content mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-5">
           {GALERIE.map((g) => (
-            <motion.div key={g.name} whileHover={{ y: -6 }} className="aspect-[3/4]">
-              <IllustrationBlock
-                Illustration={g.Illustration}
+            <motion.div key={g.label} whileHover={{ y: -6 }} className="aspect-[3/4]">
+              <HomeImage
+                src={g.src}
+                alt={g.alt}
                 className="w-full h-full rounded-[2rem]"
+                sizes="(max-width: 768px) 50vw, 25vw"
                 hoverScale
               />
               <div className="relative -mt-10 pointer-events-none">
                 <span className="ml-5 inline-block text-white font-bold uppercase text-xs tracking-widest bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
-                  {g.name}
+                  {g.label}
                 </span>
               </div>
             </motion.div>
@@ -448,26 +448,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Nom complet"
-                className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-              />
-              <input
-                type="tel"
-                placeholder="Téléphone"
-                className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-              />
-              <textarea
-                placeholder="Décrivez votre demande…"
-                rows={3}
-                className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-              />
-              <button className="w-full py-4 bg-coral text-white font-bold uppercase tracking-widest rounded-2xl hover:bg-sun hover:text-ink transition-all">
-                Envoyer ma demande
-              </button>
-            </form>
+            <ContactForm />
           </div>
         </div>
       </section>

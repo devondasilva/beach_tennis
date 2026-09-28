@@ -42,6 +42,7 @@ export interface AdminEvent {
   entryFee: number;
   prize: string;
   capacity: number;
+  poster?: string | null;
   registrations: AdminEventRegistration[];
 }
 
@@ -87,6 +88,15 @@ export interface AdminArticle {
   sourceName: string | null;
   featured: boolean;
   publishedAt: string;
+  createdAt: string;
+}
+
+export interface AdminContactMessage {
+  id: string;
+  name: string;
+  phone: string;
+  message: string;
+  read: boolean;
   createdAt: string;
 }
 

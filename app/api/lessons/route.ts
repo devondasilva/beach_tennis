@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     date,
     time,
     price: formula.price,
-    paymentMethod: paymentMethod ?? "sur_place",
+    paymentMethod: paymentMethod ?? "mtn_momo",
   });
 
   return NextResponse.json({ lesson, player });

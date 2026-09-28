@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, UserCircle } from "lucide-react";
 
 const links = [
-  { href: "/plages", label: "Plages" },
   { href: "/reservation", label: "Réserver" },
   { href: "/cours", label: "Cours" },
   { href: "/evenements", label: "Événements" },
@@ -66,7 +65,7 @@ export default function Navbar() {
   const mobileNavRef = useRef<HTMLElement>(null);
   const scrollLockY = useRef(0);
 
-  const headerBarRef = useRef<HTMLDivElement>(null);
+  const headerBarRef = useRef<HTMLElement>(null);
 
   const closeMenu = useCallback(() => setIsOpen(false), []);
 
@@ -200,13 +199,14 @@ export default function Navbar() {
 
   return (
     <header
+      ref={headerBarRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
       {/* Effet de verre dépoli */}
-      <div ref={headerBarRef} className="bg-ink/70 backdrop-blur-md border-b border-sandlight/10 shadow-sm">
+      <div className="bg-ink/70 backdrop-blur-md border-b border-sandlight/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <div className="flex items-center justify-between h-14 xs:h-16 sm:h-20">
             {/* LOGO */}

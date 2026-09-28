@@ -6,7 +6,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Beach Tennis Bénin — Réservation, cours & événements",
   description:
-    "Réservez un créneau de beach tennis, un cours avec un coach, inscrivez-vous aux tournois mensuels et suivez votre classement sur les plages de Cotonou.",
+    "Réservez un créneau de beach tennis, un cours avec un coach, inscrivez-vous aux événements et suivez votre classement sur les plages de Cotonou.",
 };
 
 export default function RootLayout({

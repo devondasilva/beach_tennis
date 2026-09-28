@@ -1,0 +1,20 @@
+Images de la page d'accueil
+===========================
+
+Les images sont importées dans lib/home-images.ts avec next/image.
+
+Les 8 fichiers de ce dossier sont de simples images de remplacement (fond
+sable). Remplace-les par tes photos en gardant les mêmes noms, ou modifie
+les lignes « import » de lib/home-images.ts pour utiliser d'autres noms
+ou extensions (.jpg, .png, .webp).
+
+  hero.jpg         bannière du haut (grande photo horizontale)
+  jeu-libre.jpg    activité « Jeu libre & forfaits »   (format 16:10)
+  coaching.jpg     activité « Coaching individuel »    (format 16:10)
+  evenements.jpg   activité « Événements »             (format 16:10)
+  galerie-1.jpg    galerie « Fin de journée »          (portrait 3:4)
+  galerie-2.jpg    galerie « Événements »              (portrait 3:4)
+  galerie-3.jpg    galerie « Coaching »                (portrait 3:4)
+  galerie-4.jpg    galerie « Équipement »              (portrait 3:4)
+
+Important : un fichier importé doit exister, sinon le build échoue.

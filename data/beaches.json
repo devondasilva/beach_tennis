@@ -11,23 +11,24 @@
       "Parking"
     ],
     "images": [
-      "/uploads/beaches/mugd0igt-ii3j71.jpg"
+      "/uploads/beaches/mukm3ybj-crbhc9.jpg"
     ],
     "active": true,
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
-    "id": "beach-haie-vive",
-    "name": "Plage de la Haie Vive",
-    "location": "Haie Vive, Cotonou",
-    "description": "Deuxième site, plus proche du centre-ville, avec une ambiance familiale et un accès facile pour les groupes.",
+    "name": "Plage de la Haie vive",
+    "location": "Calavi",
+    "description": "Une lieu de splendeur",
     "amenities": [
-      "Coach sur place",
-      "Zone ombragée",
-      "Boutique sur site"
+      "raquette",
+      "balle"
     ],
-    "images": [],
     "active": true,
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "images": [
+      "/uploads/beaches/mukld1e7-p2nnxl.jpg"
+    ],
+    "id": "bch-mukld1ee-tjrl5",
+    "createdAt": "2026-09-28T01:51:23.990Z"
   }
 ]

@@ -139,5 +139,3 @@ changement de prix sur l'ensemble du site.
   de téléphone comme identifiant, sans mot de passe — cohérent avec l'usage
   prévu (peu de friction sur la plage), mais à faire évoluer avec un code
   SMS à usage unique si le site prend de l'ampleur.
-#   b e a c h t e n n i s v 2  
- 

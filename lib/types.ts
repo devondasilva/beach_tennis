@@ -76,6 +76,7 @@ export interface EventItem {
   entryFee: number;
   prize: string;
   capacity: number;
+  poster?: string | null; // affiche de l'événement (chemin public)
   registrations: EventRegistration[];
 }
 
@@ -192,3 +193,11 @@ export interface BeachStats {
   monthly: BeachMonthlyStat[];
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  phone: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}

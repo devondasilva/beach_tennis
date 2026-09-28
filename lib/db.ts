@@ -19,10 +19,12 @@ import {
   AdPlacement,
   Partner,
   Article,
+  ContactMessage,
   BeachStats,
   BeachMonthlyStat,
 } from "./types";
 import { verifyPassword } from "./password";
+import type { SiteImageSlot } from "./site-images";
 
 const dataDir = path.join(process.cwd(), "data");
 
@@ -41,6 +43,27 @@ function newId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random()
     .toString(36)
     .slice(2, 7)}`;
+}
+
+// ---------- Homepage images ----------
+export function getSiteImages(): Partial<Record<SiteImageSlot, string>> {
+  return readJSON<Partial<Record<SiteImageSlot, string>>>("site-images.json");
+}
+
+export function setSiteImage(slot: SiteImageSlot, imagePath: string): string | undefined {
+  const images = getSiteImages();
+  const previous = images[slot];
+  images[slot] = imagePath;
+  writeJSON("site-images.json", images);
+  return previous;
+}
+
+export function removeSiteImage(slot: SiteImageSlot): string | undefined {
+  const images = getSiteImages();
+  const previous = images[slot];
+  delete images[slot];
+  writeJSON("site-images.json", images);
+  return previous;
 }
 
 // ---------- Admins ----------
@@ -656,4 +679,43 @@ export function deleteArticle(id: string): Article | undefined {
   if (next.length === articles.length) return undefined;
   writeJSON("articles.json", next);
   return found;
+}
+
+// ---------- Messages de contact (formulaire "Parlons de votre projet") ----------
+export function getContactMessages(): ContactMessage[] {
+  return readJSON<ContactMessage[]>("contact-messages.json").sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export function createContactMessage(
+  msg: Omit<ContactMessage, "id" | "createdAt" | "read">
+): ContactMessage {
+  const messages = readJSON<ContactMessage[]>("contact-messages.json");
+  const full: ContactMessage = {
+    ...msg,
+    id: newId("msg"),
+    read: false,
+    createdAt: new Date().toISOString(),
+  };
+  messages.push(full);
+  writeJSON("contact-messages.json", messages);
+  return full;
+}
+
+export function markContactMessageRead(id: string, read: boolean): ContactMessage | undefined {
+  const messages = readJSON<ContactMessage[]>("contact-messages.json");
+  const idx = messages.findIndex((m) => m.id === id);
+  if (idx === -1) return undefined;
+  messages[idx] = { ...messages[idx], read };
+  writeJSON("contact-messages.json", messages);
+  return messages[idx];
+}
+
+export function deleteContactMessage(id: string): boolean {
+  const messages = readJSON<ContactMessage[]>("contact-messages.json");
+  const next = messages.filter((m) => m.id !== id);
+  if (next.length === messages.length) return false;
+  writeJSON("contact-messages.json", next);
+  return true;
 }

@@ -20,5 +20,17 @@
     "prize": "Dotation équipementier + invitations VIP événement du mois suivant",
     "capacity": 24,
     "registrations": []
+  },
+  {
+    "title": "Open Beach Tennis",
+    "date": "2026-09-27",
+    "category": "Sport",
+    "description": "Venez vous faire plaisir",
+    "entryFee": 5000,
+    "prize": "Medaille or",
+    "capacity": 125,
+    "poster": "/uploads/events/mukji5qn-djeqpm.jpg",
+    "id": "evt-mukji5qs-v5q14",
+    "registrations": []
   }
 ]

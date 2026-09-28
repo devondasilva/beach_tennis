@@ -139,7 +139,7 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
             href={`/reservation?beachId=${beach.id}`}
             className="mt-8 inline-flex items-center rounded-card bg-coral text-white font-semibold px-6 py-3 hover:bg-ink transition-colors"
           >
-            Réserver sur ce site
+            Voir les disponibilités
           </Link>
         </div>
 

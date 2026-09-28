@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     date,
     time,
     price: tariff.price,
-    paymentMethod: paymentMethod ?? "sur_place",
+    paymentMethod: paymentMethod ?? "mtn_momo",
     status: "confirmee",
   });
 

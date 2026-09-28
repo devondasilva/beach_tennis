@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "name": "MADES",
+    "websiteUrl": "https://www.mades.world/fr",
+    "logoUrl": "/uploads/partners/mukk8oqn-k77513.png",
+    "id": "pt-mukk8oqr-sxewx",
+    "createdAt": "2026-09-28T01:20:01.347Z"
+  },
+  {
+    "name": "DAS COM",
+    "websiteUrl": "https://dascommunication.vercel.app/",
+    "logoUrl": "/uploads/partners/mukk9cwf-fzb56p.png",
+    "id": "pt-mukk9cwk-kwpsa",
+    "createdAt": "2026-09-28T01:20:32.660Z"
+  },
+  {
+    "name": "JES",
+    "websiteUrl": null,
+    "logoUrl": "/uploads/partners/mukk9t5r-2lpts6.png",
+    "id": "pt-mukk9t5u-sc38c",
+    "createdAt": "2026-09-28T01:20:53.730Z"
+  },
+  {
+    "name": "LA FORÊT",
+    "websiteUrl": null,
+    "logoUrl": "/uploads/partners/mukkaguw-degcbj.png",
+    "id": "pt-mukkagv4-uj9r3",
+    "createdAt": "2026-09-28T01:21:24.448Z"
+  }
+]

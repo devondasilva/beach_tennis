@@ -118,7 +118,7 @@ export default function ReservationClient() {
         <h1 className="font-display text-4xl text-ink">Choisissez votre créneau</h1>
         <p className="mt-3 text-ink/70">
           L&rsquo;activité se joue surtout le week-end — vendredi soir, samedi et
-          dimanche. Le règlement se fait par Mobile Money ou sur place.
+          dimanche. Le règlement se fait par Mobile Money.
         </p>
       </div>
 
@@ -261,12 +261,11 @@ export default function ReservationClient() {
 
         <fieldset>
           <legend className="font-display text-lg text-ink mb-4">Paiement</legend>
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             {(
               [
                 { id: "mtn_momo", label: "MTN Mobile Money" },
                 { id: "moov_money", label: "Moov Money" },
-                { id: "sur_place", label: "Sur place" },
               ] as { id: PaymentMethod; label: string }[]
             ).map((m) => (
               <label

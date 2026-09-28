@@ -25,6 +25,7 @@ import AdsTab from "./AdsTab";
 import PartnersTab from "./PartnersTab";
 import ArticlesTab from "./ArticlesTab";
 import AccountTab from "./AccountTab";
+import ContactTab from "./ContactTab";
 
 type Tab =
   | "apercu"
@@ -38,6 +39,7 @@ type Tab =
   | "publicites"
   | "partenaires"
   | "actualites"
+  | "messages"
   | "compte";
 
 const TABS: { id: Tab; label: string }[] = [
@@ -52,6 +54,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "publicites", label: "Publicités" },
   { id: "partenaires", label: "Partenaires" },
   { id: "actualites", label: "Actualités" },
+  { id: "messages", label: "Messages" },
   { id: "compte", label: "Mon compte" },
 ];
 
@@ -250,6 +253,7 @@ export default function AdminPage() {
         {tab === "publicites" && <AdsTab />}
         {tab === "partenaires" && <PartnersTab />}
         {tab === "actualites" && <ArticlesTab />}
+        {tab === "messages" && <ContactTab />}
         {tab === "compte" && <AccountTab adminName={adminName ?? undefined} />}
       </div>
     </div>

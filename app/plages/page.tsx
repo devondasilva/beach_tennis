@@ -62,6 +62,9 @@ export default function PlagesPage() {
                   </span>
                 </div>
                 <p className="mt-3 text-sm text-ink/70 line-clamp-2">{b.description}</p>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-coral">
+                  Voir plus <span aria-hidden>→</span>
+                </span>
               </div>
             </Link>
           ))}

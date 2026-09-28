@@ -221,12 +221,11 @@ export default function CoursPage() {
 
         <fieldset>
           <legend className="font-display text-lg text-ink mb-4">Paiement</legend>
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             {(
               [
                 { id: "mtn_momo", label: "MTN Mobile Money" },
                 { id: "moov_money", label: "Moov Money" },
-                { id: "sur_place", label: "Sur place" },
               ] as { id: PaymentMethod; label: string }[]
             ).map((m) => (
               <label

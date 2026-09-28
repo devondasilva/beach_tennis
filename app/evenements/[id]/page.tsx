@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getEventById } from "@/lib/db";
 import { formatFCFA } from "@/lib/pricing";
 import EventRegisterForm from "./EventRegisterForm";
@@ -14,6 +15,17 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   return (
     <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 grid md:grid-cols-12 gap-12">
       <div className="md:col-span-7">
+        {event.poster && (
+          <Image
+            src={event.poster}
+            alt={`Affiche de ${event.title}`}
+            width={900}
+            height={1200}
+            sizes="(max-width: 768px) 100vw, 58vw"
+            priority
+            className="w-full max-w-md h-auto rounded-card border border-ink/10 mb-8"
+          />
+        )}
         <p className="tag-label mb-3">{event.category}</p>
         <h1 className="font-display text-4xl text-ink">{event.title}</h1>
         <p className="mt-3 text-ink/70">
