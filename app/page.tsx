@@ -104,11 +104,20 @@ export default function HomePage() {
             transition={{ duration: 0.7, ease: "easeOut" }}
             className="lg:col-span-7"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sun/10 border border-sun/30 backdrop-blur-md mb-6">
-              <Sun size={15} className="text-sun animate-spin-slow" />
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-sun">
-              Saison 2026 · Plages de Cotonou
-              </span>
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sun/10 border border-sun/30 backdrop-blur-md">
+                <Sun size={15} className="text-sun animate-spin-slow" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-sun">
+                Saison 2026 · Plages de Cotonou
+                </span>
+              </div>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sun text-ink font-bold text-xs uppercase tracking-[0.15em] hover:bg-coral hover:text-white transition-colors shadow-lg shadow-sun/20"
+              >
+                <Users size={15} />
+                Devenir formateur
+              </a>
             </div>
 
             <h1 className="font-display text-5xl md:text-7xl font-black leading-[1] tracking-tight mb-6">
@@ -204,6 +213,32 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------ BANDEAU PARTENAIRES (teaser, version complète plus bas) ------------------------------ */}
+      <section className="max-w-content mx-auto px-6 pb-8">
+        <a
+          href="#partenaires"
+          className="group flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-ink/10 bg-white p-6 hover:border-coral/40 transition-colors"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-full bg-sun/15 text-sun flex items-center justify-center shrink-0">
+              <Waves size={20} />
+            </div>
+            <div>
+              <p className="font-display text-lg text-ink leading-tight">
+                Un établissement en bord de mer ?
+              </p>
+              <p className="text-sm text-ink/60">
+                Installez un point Beach Tennis Bénin clé en main sur votre plage.
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-coral shrink-0">
+            Devenir plage partenaire
+            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </span>
+        </a>
+      </section>
+
       {/* ------------------------------ VOIR NOS PLAGES ------------------------------ */}
       <BeachesShowcase />
 
@@ -272,24 +307,24 @@ export default function HomePage() {
           <p className="text-sm text-ink/60 font-semibold">
             Et aussi : la boutique d&rsquo;accessoires, le classement des joueurs et nos actualités.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
             <Link
               href="/boutique"
-              className="text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-ink/15 hover:border-coral hover:text-coral transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-ink underline decoration-ink/30 decoration-2 underline-offset-4 hover:text-coral hover:decoration-coral transition-colors"
             >
-              Boutique
+              Boutique <span aria-hidden>→</span>
             </Link>
             <Link
               href="/classement"
-              className="text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-ink/15 hover:border-coral hover:text-coral transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-ink underline decoration-ink/30 decoration-2 underline-offset-4 hover:text-coral hover:decoration-coral transition-colors"
             >
-              Classement
+              Classement <span aria-hidden>→</span>
             </Link>
             <Link
               href="/actualites"
-              className="text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border border-ink/15 hover:border-coral hover:text-coral transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-ink underline decoration-ink/30 decoration-2 underline-offset-4 hover:text-coral hover:decoration-coral transition-colors"
             >
-              Actualités
+              Actualités <span aria-hidden>→</span>
             </Link>
           </div>
         </div>
@@ -392,6 +427,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+
 
       {/* ------------------------------ FORMULES ADAPTÉES ------------------------------ */}
       <section id="formules" className="py-28 md:py-32">
