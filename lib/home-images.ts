@@ -10,16 +10,17 @@
  * Les fichiers fournis sont de simples images de remplacement (fond sable).
  */
 import hero from "@/public/img1.jpg";
-import jeuLibre from "@/public/img1.jpg";
-import coaching from "@/public/img2.jpg";
-import evenements from "@/public/img3.jpg";
+import hero1 from "@/public/img4.jpg";
+import jeuLibre from "@/public/img4.jpg";
+import coaching from "@/public/img5.jpg";
+import evenements from "@/public/img6.jpg";
 // import galerie1 from "@/public/images/accueil/galerie-1.jpg";
 // import galerie2 from "@/public/images/accueil/galerie-2.jpg";
 // import galerie3 from "@/public/images/accueil/galerie-3.jpg";
 // import galerie4 from "@/public/images/accueil/galerie-4.jpg";
 
 export const HOME_IMAGES = {
-  hero: { src: hero, alt: "Beach tennis sur les plages de Cotonou" },
+  hero: { src: hero1, alt: "Beach tennis sur les plages de Cotonou" },
   activites: {
     jeuLibre: { src: jeuLibre, alt: "Jeu libre et forfaits" },
     coaching: { src: coaching, alt: "Coaching individuel" },
