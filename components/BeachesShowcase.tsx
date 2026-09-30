@@ -32,7 +32,7 @@ export default function BeachesShowcase() {
   if (beaches.length === 0) return null;
 
   return (
-    <section className="max-w-content mx-auto px-6 py-16 md:py-20">
+    <section className="max-w-content mx-auto px-6 py-8 md:py-10">
       <div className="flex items-end justify-between gap-4 mb-8">
         <div>
           <p className="tag-label mb-2">Voir nos plages</p>
@@ -64,7 +64,7 @@ export default function BeachesShowcase() {
                 />
               </div>
             ) : (
-              <div className="h-40 w-full bg-sand/60 flex items-center justify-center text-ink/25">
+              <div className="h-30 w-full bg-sand/60 flex items-center justify-center text-ink/25">
                 <Waves size={32} />
               </div>
             )}

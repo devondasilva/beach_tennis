@@ -82,7 +82,7 @@ export default function HomePage() {
   return (
     <div className="bg-sandlight text-ink font-body">
       {/* ------------------------------ NOUVEAU HERO REDESIGNÉ ------------------------------ */}
-      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 bg-ink text-white">
+      <section className="relative overflow-hidden pt-24 pb-20 md:pt-30 md:pb-28 bg-ink text-white">
         {/* Fond d'illustration avec superposition sombre et subtil dégradé corail/soleil */}
         <div className="absolute inset-0 opacity-60">
           <HomeImage
@@ -112,7 +112,9 @@ export default function HomePage() {
                 </span>
               </div>
               <a
-                href="#contact"
+                href="https://www.mades.world/en/programs"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sun text-ink font-bold text-xs uppercase tracking-[0.15em] hover:bg-coral hover:text-white transition-colors shadow-lg shadow-sun/20"
               >
                 <Users size={15} />
@@ -243,12 +245,12 @@ export default function HomePage() {
       <BeachesShowcase />
 
       {/* ------------------------------ ESPACE PUBLICITAIRE ------------------------------ */}
-      <section className="max-w-content mx-auto px-6 pt-16 md:pt-20">
+      <section className="max-w-content mx-auto px-6 pt-8 md:pt-10">
         <AdBanner placement="accueil" />
       </section>
 
       {/* ------------------------------ ACTIVITÉS — SPLITS ALTERNÉS ------------------------------ */}
-      <section id="activites" className="py-28 md:py-32 space-y-28 md:space-y-32">
+      <section id="activites" className="py-14 md:py-16 space-y-14 md:space-y-16">
         {ACTIVITES.map((a, i) => (
           <div
             key={a.title}
