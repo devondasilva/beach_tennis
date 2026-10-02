@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Lock, QrCode, Trophy, UserCircle, Waves } from "lucide-react";
 import PasswordInput from "@/components/PasswordInput";
+import PageHero, { PageBody } from "@/components/ui/PageHero";
+import { PAGE_IMAGES } from "@/lib/page-images";
+import { ui } from "@/lib/ui";
 
 type Mode = "player" | "admin";
 
@@ -73,27 +78,52 @@ export default function LoginClient() {
   }
 
   return (
-    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
-      <div className="max-w-md mx-auto">
-        <p className="tag-label mb-3">Connexion</p>
-        <h1 className="font-display text-4xl text-ink">
-          {mode === "player" ? "Mon espace joueur" : "Administration"}
-        </h1>
-
-        <div className="mt-6 flex gap-2">
+    <div className="bg-sandlight">
+      <PageHero
+        badge="Connexion"
+        icon={<UserCircle size={15} />}
+        title={mode === "player" ? "Mon espace" : "Espace"}
+        accent={mode === "player" ? "joueur." : "administration."}
+        subtitle="Retrouvez votre QR code, vos points de fidélité, votre historique et le classement des joueurs."
+        image={PAGE_IMAGES.compte}
+        crumbs={[{ href: "/", label: "Accueil" }]}
+        aside={
+          <div className="hidden lg:block bg-white/10 backdrop-blur-xl border border-white/15 p-7 rounded-[2.25rem] space-y-4">
+            {[
+              { icon: QrCode, t: "Votre QR code d'accès personnel" },
+              { icon: Trophy, t: "Vos points et votre place au classement" },
+              { icon: Waves, t: "L'historique de vos séances et cours" },
+            ].map((x) => (
+              <div key={x.t} className="flex items-center gap-4 text-sm text-white/85">
+                <span className="w-10 h-10 rounded-xl bg-sun/20 text-sun flex items-center justify-center shrink-0">
+                  <x.icon size={18} />
+                </span>
+                {x.t}
+              </div>
+            ))}
+          </div>
+        }
+      />
+      <PageBody>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className={`max-w-lg mx-auto ${ui.card} p-7 md:p-10`}
+      >
+        <div className="grid grid-cols-2 gap-1 rounded-2xl bg-sandlight p-1.5">
           <button
             type="button"
             onClick={() => {
               setMode("player");
               setError(null);
             }}
-            className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border transition-colors ${
-              mode === "player"
-                ? "bg-ink text-white border-ink"
-                : "border-ink/15 text-ink/60 hover:border-ink/40"
+            className={`relative text-xs font-bold uppercase tracking-widest px-4 py-3 rounded-xl transition-colors ${
+              mode === "player" ? "text-white" : "text-ink/60 hover:text-ink"
             }`}
           >
-            Espace joueur
+            {mode === "player" && <motion.span layoutId="login-tab" className="absolute inset-0 rounded-xl bg-ink" />}
+            <span className="relative">Espace joueur</span>
           </button>
           <button
             type="button"
@@ -101,26 +131,28 @@ export default function LoginClient() {
               setMode("admin");
               setError(null);
             }}
-            className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full border transition-colors ${
-              mode === "admin"
-                ? "bg-ink text-white border-ink"
-                : "border-ink/15 text-ink/60 hover:border-ink/40"
+            className={`relative text-xs font-bold uppercase tracking-widest px-4 py-3 rounded-xl transition-colors ${
+              mode === "admin" ? "text-white" : "text-ink/60 hover:text-ink"
             }`}
           >
-            Administration
+            {mode === "admin" && <motion.span layoutId="login-tab" className="absolute inset-0 rounded-xl bg-ink" />}
+            <span className="relative inline-flex items-center gap-1.5">
+              <Lock size={12} /> Administration
+            </span>
           </button>
         </div>
 
+        <AnimatePresence mode="wait">
         {mode === "player" ? (
-          <>
-            <p className="mt-4 text-sm text-ink/60">
+          <motion.div key="player" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }} transition={{ duration: 0.3 }}>
+            <p className="mt-6 text-sm text-ink/60 leading-relaxed">
               Connecte-toi avec ton nom et ton numéro de téléphone pour accéder au
               classement et à ton espace personnel. Si c&rsquo;est ta première visite,
               un profil est créé automatiquement.
             </p>
             <form onSubmit={handlePlayerSubmit} className="mt-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-ink mb-1" htmlFor="name">
+                <label className={ui.label} htmlFor="name">
                   Nom complet
                 </label>
                 <input
@@ -129,11 +161,11 @@ export default function LoginClient() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex. Aïcha Dossou"
-                  className="w-full rounded-card border border-ink/20 px-3 py-2 bg-white"
+                  className={ui.input}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-ink mb-1" htmlFor="phone">
+                <label className={ui.label} htmlFor="phone">
                   Numéro de téléphone
                 </label>
                 <input
@@ -143,29 +175,29 @@ export default function LoginClient() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Ex. 97 00 00 00"
-                  className="w-full rounded-card border border-ink/20 px-3 py-2 bg-white"
+                  className={ui.input}
                 />
               </div>
               {error && (
-                <p className="text-sm text-coral bg-coral/10 rounded-card px-4 py-3">{error}</p>
+                <p className={ui.error}>{error}</p>
               )}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-card bg-coral text-white font-semibold px-6 py-3 hover:bg-ink transition-colors disabled:opacity-60"
+                className={`w-full ${ui.btnPrimary}`}
               >
                 {loading ? "Connexion…" : "Se connecter"}
               </button>
             </form>
-          </>
+          </motion.div>
         ) : (
-          <>
-            <p className="mt-4 text-sm text-ink/60">
+          <motion.div key="admin" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3 }}>
+            <p className="mt-6 text-sm text-ink/60 leading-relaxed">
               Accès réservé à l&rsquo;équipe Beach Tennis Bénin.
             </p>
             <form onSubmit={handleAdminSubmit} className="mt-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-ink mb-1" htmlFor="username">
+                <label className={ui.label} htmlFor="username">
                   Identifiant
                 </label>
                 <input
@@ -174,11 +206,11 @@ export default function LoginClient() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="admin"
-                  className="w-full rounded-card border border-ink/20 px-3 py-2 bg-white"
+                  className={ui.input}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-ink mb-1" htmlFor="password">
+                <label className={ui.label} htmlFor="password">
                   Mot de passe
                 </label>
                 <PasswordInput
@@ -191,19 +223,21 @@ export default function LoginClient() {
                 />
               </div>
               {error && (
-                <p className="text-sm text-coral bg-coral/10 rounded-card px-4 py-3">{error}</p>
+                <p className={ui.error}>{error}</p>
               )}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-card bg-ink text-white font-semibold px-6 py-3 hover:bg-coral transition-colors disabled:opacity-60"
+                className={`w-full ${ui.btnDark}`}
               >
                 {loading ? "Connexion…" : "Se connecter"}
               </button>
             </form>
-          </>
+          </motion.div>
         )}
-      </div>
+        </AnimatePresence>
+      </motion.div>
+      </PageBody>
     </div>
   );
 }

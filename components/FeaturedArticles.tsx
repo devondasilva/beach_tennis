@@ -38,8 +38,8 @@ export default function FeaturedArticles() {
     <section className="max-w-content mx-auto px-6 py-16">
       <div className="flex items-end justify-between gap-4 mb-8">
         <div>
-          <p className="tag-label mb-2">À la une</p>
-          <h2 className="font-display text-3xl text-ink">Actualités du club</h2>
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">À la une</span>
+          <h2 className="font-display text-3xl md:text-4xl font-black tracking-tight mt-3 text-ink">Actualités du club.</h2>
         </div>
         <Link
           href="/actualites"
@@ -59,15 +59,15 @@ export default function FeaturedArticles() {
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
-              className="rounded-card border border-ink/15 overflow-hidden flex flex-col hover:border-coral/40 transition-colors group"
+              className="bg-white rounded-[2rem] border border-ink/[0.08] overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-coral/10 hover:-translate-y-1 transition-all duration-300 group"
             >
-              <div className="relative w-full aspect-[16/10] bg-sandlight">
+              <div className="relative w-full aspect-[16/10] bg-sandlight overflow-hidden">
                 {a.imageUrl ? (
                   <Image
                     src={a.imageUrl}
                     alt={a.title}
                     fill
-                    className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
@@ -83,7 +83,7 @@ export default function FeaturedArticles() {
                     month: "long",
                   })}
                 </p>
-                <h3 className="font-display text-base text-ink">{a.title}</h3>
+                <h3 className="font-display text-lg font-bold text-ink">{a.title}</h3>
                 <p className="mt-2 text-sm text-ink/70 flex-1">{a.excerpt}</p>
                 {external && (
                   <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-coral">

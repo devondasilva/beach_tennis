@@ -31,13 +31,13 @@ export default function PartnerLogos() {
 
   return (
     <section className="max-w-content mx-auto px-6 py-10">
-      <p className="text-center text-[11px] font-bold uppercase tracking-widest text-ink/40 mb-6">
+      <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-ink/40 mb-8">
         Ils nous font confiance
       </p>
       <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
         {partners.map((p) => {
           const logo = (
-            <div className="relative h-10 w-28 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+            <div className="relative h-12 w-32 grayscale hover:grayscale-0 transition-all duration-500 opacity-60 hover:opacity-100 hover:scale-110">
               <Image src={p.logoUrl} alt={p.name} fill className="object-contain" />
             </div>
           );

@@ -1,3 +1,5 @@
+import type { Analytics } from "@/lib/analytics";
+
 export interface AdminBooking {
   id: string;
   playerName: string;
@@ -109,6 +111,7 @@ export interface AdminPlayer {
 }
 
 export interface Stats {
+  analytics: Analytics;
   totals: {
     players: number;
     bookings: number;

@@ -44,7 +44,7 @@ export default function ReviewForm({
 
   if (done) {
     return (
-      <p className="text-sm text-lagoon bg-lagoon/10 rounded-card px-4 py-3">
+      <p className="text-sm font-semibold text-ink bg-sun rounded-2xl px-4 py-3">
         Merci pour votre avis ! Il est maintenant visible ci-dessus.
       </p>
     );
@@ -53,14 +53,14 @@ export default function ReviewForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <p className="text-sm font-semibold text-ink mb-1">Votre note</p>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mb-2">Votre note</p>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
             <button
               key={n}
               type="button"
               onClick={() => setRating(n)}
-              className={`text-2xl leading-none ${n <= rating ? "text-sun" : "text-ink/20"}`}
+              className={`text-3xl leading-none transition-transform hover:scale-125 ${n <= rating ? "text-sun" : "text-white/20"}`}
               aria-label={`${n} étoile${n > 1 ? "s" : ""}`}
             >
               ★
@@ -73,7 +73,7 @@ export default function ReviewForm({
         rows={3}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="w-full rounded-card border border-ink/20 px-3 py-2 text-sm"
+        className="w-full rounded-2xl border-2 border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/40 focus:border-sun focus:outline-none transition-colors"
       />
       <div className="grid sm:grid-cols-2 gap-3">
         <input
@@ -81,21 +81,21 @@ export default function ReviewForm({
           placeholder="Nom complet"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+          className="rounded-2xl border-2 border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/40 focus:border-sun focus:outline-none transition-colors"
         />
         <input
           required
           placeholder="Téléphone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded-card border border-ink/20 px-3 py-2 text-sm"
+          className="rounded-2xl border-2 border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/40 focus:border-sun focus:outline-none transition-colors"
         />
       </div>
-      {error && <p className="text-xs text-coral">{error}</p>}
+      {error && <p className="text-sm font-semibold text-white bg-coral/90 rounded-2xl px-4 py-3">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="rounded-card bg-coral text-white font-semibold px-5 py-2.5 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+        className="w-full py-4 bg-coral text-white font-bold uppercase tracking-widest text-xs rounded-2xl hover:bg-sun hover:text-ink transition-all disabled:opacity-60"
       >
         {loading ? "Envoi…" : "Publier mon avis"}
       </button>

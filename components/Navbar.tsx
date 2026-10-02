@@ -4,12 +4,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, UserCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { LogOut, Menu, X, UserCircle } from "lucide-react";
 
 const links = [
   { href: "/reservation", label: "Réserver" },
   { href: "/cours", label: "Cours" },
   { href: "/evenements", label: "Événements" },
+  { href: "/plages", label: "Plages" },
   { href: "/actualites", label: "Actualités" },
   { href: "/boutique", label: "Boutique" },
   { href: "/classement", label: "Classement" },
@@ -27,7 +29,7 @@ interface NavLinkProps {
 function NavLink({ href, label, isActive, mobile = false, onClick }: NavLinkProps) {
   const baseClasses = "transition-colors duration-200 tracking-widest uppercase touch-manipulation";
 
-  const desktopClasses = `text-sm font-medium hover:text-sun ${
+  const desktopClasses = `text-[13px] xl:text-sm font-medium hover:text-sun whitespace-nowrap ${
     isActive ? "text-sun" : "text-sandlight/90"
   }`;
 
@@ -38,11 +40,18 @@ function NavLink({ href, label, isActive, mobile = false, onClick }: NavLinkProp
   return (
     <Link
       href={href}
-      className={mobile ? `${baseClasses} ${mobileClasses}` : `${baseClasses} ${desktopClasses}`}
+      className={mobile ? `${baseClasses} ${mobileClasses}` : `relative py-2 ${baseClasses} ${desktopClasses}`}
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
     >
       {label}
+      {!mobile && isActive && (
+        <motion.span
+          layoutId="nav-underline"
+          className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-sun"
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
     </Link>
   );
 }
@@ -56,8 +65,10 @@ interface Session {
 export default function Navbar() {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
 
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
@@ -89,7 +100,7 @@ export default function Navbar() {
       window.removeEventListener("orientationchange", setVar);
       window.removeEventListener("resize", setVar);
     };
-  }, []);
+  }, [isAdmin]);
 
   // --- GESTION DU SCROLL (masquer/afficher la navbar) ---
   const [session, setSession] = useState<Session | null>(null);
@@ -104,6 +115,7 @@ export default function Navbar() {
 
       window.requestAnimationFrame(() => {
         const currentScrollY = window.scrollY;
+        setScrolled(currentScrollY > 24);
 
         if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
           setIsVisible(false); // scroll vers le bas -> on masque
@@ -197,6 +209,9 @@ export default function Navbar() {
     router.refresh();
   }
 
+  // Le back-office a sa propre interface (barre latérale) : pas de barre publique.
+  if (isAdmin) return null;
+
   return (
     <header
       ref={headerBarRef}
@@ -206,7 +221,11 @@ export default function Navbar() {
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
       {/* Effet de verre dépoli */}
-      <div className="bg-ink/70 backdrop-blur-md border-b border-sandlight/10 shadow-sm">
+      <div
+        className={`backdrop-blur-md border-b border-sandlight/10 transition-[background-color,box-shadow] duration-300 ${
+          scrolled ? "bg-ink/90 shadow-lg shadow-ink/20" : "bg-ink/70 shadow-sm"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <div className="flex items-center justify-between h-14 xs:h-16 sm:h-20">
             {/* LOGO */}
@@ -231,14 +250,14 @@ export default function Navbar() {
             </Link>
 
             {/* NAVIGATION DESKTOP */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
               {links.map((l) => (
-                <NavLink key={l.href} href={l.href} label={l.label} isActive={pathname === l.href} onClick={closeMenu} />
+                <NavLink key={l.href} href={l.href} label={l.label} isActive={pathname === l.href || pathname.startsWith(l.href + "/")} onClick={closeMenu} />
               ))}
             </nav>
 
             {/* BOUTON COMPTE DESKTOP */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-3 shrink-0">
               {sessionLoaded && session ? (
                 <>
                   <Link
@@ -246,14 +265,18 @@ export default function Navbar() {
                     className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest hover:text-sun transition-colors text-sandlight/90"
                   >
                     <UserCircle size={20} />
-                    {session.role === "admin" ? "Tableau de bord" : "Mon espace"}
+                    <span className="hidden xl:inline whitespace-nowrap">
+                      {session.role === "admin" ? "Tableau de bord" : "Mon espace"}
+                    </span>
                   </Link>
                   <span className="text-sandlight/20">|</span>
                   <button
                     onClick={handleLogout}
-                    className="text-xs font-semibold uppercase tracking-widest text-sandlight/50 hover:text-coral transition-colors"
+                    aria-label="Déconnexion"
+                    title="Déconnexion"
+                    className="text-sandlight/50 hover:text-coral transition-colors"
                   >
-                    Déconnexion
+                    <LogOut size={18} />
                   </button>
                 </>
               ) : (
@@ -271,7 +294,7 @@ export default function Navbar() {
             <button
               ref={menuButtonRef}
               type="button"
-              className="md:hidden flex items-center justify-center w-11 h-11 -mr-2 rounded-md z-50 text-sandlight hover:bg-sandlight/10 active:bg-sandlight/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-sun touch-manipulation"
+              className="lg:hidden flex items-center justify-center w-11 h-11 -mr-2 rounded-md z-50 text-sandlight hover:bg-sandlight/10 active:bg-sandlight/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-sun touch-manipulation"
               onClick={() => setIsOpen((v) => !v)}
               aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={isOpen}
@@ -292,7 +315,7 @@ export default function Navbar() {
         aria-modal="true"
         aria-hidden={!isOpen}
         onClick={closeMenu}
-        className={`fixed inset-0 top-0 bg-ink/80 backdrop-blur-xl z-40 md:hidden flex flex-col transition-[transform,opacity] duration-300 ease-in-out overscroll-contain overflow-x-hidden ${
+        className={`fixed inset-0 top-0 bg-ink/80 backdrop-blur-xl z-40 lg:hidden flex flex-col transition-[transform,opacity] duration-300 ease-in-out overscroll-contain overflow-x-hidden ${
           isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
         }`}
         style={{
@@ -320,15 +343,22 @@ export default function Navbar() {
           onClick={(e) => e.stopPropagation()}
         >
           <nav ref={mobileNavRef} className="flex flex-col items-center w-full border-t border-sandlight/10">
-            {links.map((l) => (
-              <NavLink
-                key={l.href}
-                href={l.href}
-                label={l.label}
-                isActive={pathname === l.href}
-                onClick={closeMenu}
-                mobile
-              />
+            {links.map((l, i) => (
+              <motion.div
+                key={l.href + String(isOpen)}
+                className="w-full"
+                initial={{ opacity: 0, x: 40 }}
+                animate={isOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+                transition={{ delay: isOpen ? 0.08 + i * 0.05 : 0, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <NavLink
+                  href={l.href}
+                  label={l.label}
+                  isActive={pathname === l.href || pathname.startsWith(l.href + "/")}
+                  onClick={closeMenu}
+                  mobile
+                />
+              </motion.div>
             ))}
           </nav>
 

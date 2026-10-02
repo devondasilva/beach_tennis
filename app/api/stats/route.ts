@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   getPlayers,
   getBookings,
@@ -8,11 +8,12 @@ import {
   getProducts,
 } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { computeAnalytics, parseRange } from "@/lib/analytics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) {
     return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
@@ -42,7 +43,10 @@ export async function GET() {
   const totalRevenue =
     revenueBookings + revenueLessons + revenueOrders + revenueEvents;
 
+  const analytics = computeAnalytics(parseRange(req.nextUrl.searchParams.get("range")));
+
   return NextResponse.json({
+    analytics,
     totals: {
       players: players.length,
       bookings: bookings.length,

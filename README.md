@@ -48,6 +48,61 @@ npm run start
 Toutes les pages consomment des routes API sous `app/api/*` (réservations,
 cours, événements, produits, commandes, génération de QR code, statistiques).
 
+## Identité visuelle
+
+Le site garde sa propre identité Beach Tennis Bénin :
+
+| Rôle | Valeur |
+|---|---|
+| Encre lagon (texte, fonds sombres) | `#0B2E3D` (`ink`) |
+| Sable clair (fond de page) / sable chaud | `#FBF6EC` (`sandlight`) / `#F2E4C9` (`sand`) |
+| Corail (accent, boutons) | `#E8593B` (`coral`) |
+| Lagon (liens) | `#12807F` (`lagoon`) |
+| Soleil | `#F4A63B` (`sun`) |
+| Palmier | `#2F6E4F` (`palm`) |
+| Titres | Fraunces (900) |
+| Texte | Inter |
+
+Les polices sont auto-hébergées (`@fontsource/fraunces`, `@fontsource/inter`).
+
+Toutes les pages reprennent le langage de la page d'accueil : bandeau d'en-tête
+bleu lagon avec photo voilée et badge soleil (`components/ui/PageHero.tsx`),
+contenu en cartes blanches très arrondies qui remontent sur le bandeau, boutons
+en capitales, récapitulatif sombre collant sur les formulaires de réservation.
+Les classes communes sont dans `lib/ui.ts`.
+
+Animations (framer-motion) : parallaxe du hero, compteurs animés, apparitions au
+défilement, transitions de page, filtres animés de la boutique, podium du
+classement, écrans de confirmation. Tout respecte `prefers-reduced-motion`.
+
+## Tableau de bord et statistiques
+
+`/admin` est une application de back-office complète : barre latérale (avec
+badges d'alerte), sélecteur de période (7 j, 30 j, 90 j, 12 mois, tout),
+export CSV et tiroir de navigation sur mobile.
+
+- **Vue d'ensemble** : chiffre d'affaires, réservations, nouveaux joueurs, panier
+  moyen (avec variation par rapport à la période précédente et mini-courbes),
+  évolution du CA par source (filtrable), répartition en anneau, remplissage des
+  événements, fil d'activité récente, alertes (messages, commandes, stock).
+- **Statistiques** : joueurs actifs, taux d'annulation, créneau le plus demandé,
+  satisfaction, carte de chaleur jour × créneau, formules les plus réservées,
+  performance par plage, moyens de paiement, niveaux, croissance de la
+  communauté, meilleurs joueurs, activité des coachs, ventes boutique.
+
+Les calculs sont faits côté serveur dans `lib/analytics.ts` (route
+`/api/stats?range=30d`). La palette des graphiques (`lib/chart-theme.ts`) a été
+validée pour les daltonismes.
+
+### Données de démonstration
+
+Pour voir le tableau de bord rempli (12 mois d'activité simulée) :
+
+```bash
+npm run seed:demo      # sauvegarde /data dans data/_backups/ puis génère les données
+npm run seed:restore   # revient à vos données d'origine
+```
+
 ## Connexion et rôles
 
 Le site distingue deux profils, chacun avec son propre espace via `/login` :

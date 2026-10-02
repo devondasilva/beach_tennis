@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import CountUp from "@/components/motion/CountUp";
 import {
   Sun,
   Waves,
@@ -75,16 +76,48 @@ const FORMULES = [
 ];
 
 /* ------------------------------------------------------------------ */
+/*  ANIMATIONS                                                        */
+/* ------------------------------------------------------------------ */
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+const reveal = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.8, ease: EASE },
+};
+
+/** Chiffre clé qui s'incrémente à l'apparition ("1000 FCFA", "<2 min", "100%"…). */
+function AnimatedStat({ value }: { value: string }) {
+  const m = value.match(/^(\D*)(\d+)(.*)$/);
+  if (!m) return <>{value}</>;
+  const [, prefix, num, suffix] = m;
+  return (
+    <>
+      {prefix}
+      <CountUp value={Number(num)} format={(v) => String(Math.round(v))} duration={1.6} />
+      {suffix}
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  PAGE                                                              */
 /* ------------------------------------------------------------------ */
 
 export default function HomePage() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroBgY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+  const heroBgScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.14]);
+
   return (
     <div className="bg-sandlight text-ink font-body">
       {/* ------------------------------ NOUVEAU HERO REDESIGNÉ ------------------------------ */}
-      <section className="relative overflow-hidden pt-24 pb-20 md:pt-30 md:pb-28 bg-ink text-white">
+      <section ref={heroRef} className="relative overflow-hidden pt-[calc(var(--nav-height,4.5rem)+2rem)] pb-20 md:pt-[calc(var(--nav-height,5rem)+3.5rem)] md:pb-28 bg-ink text-white">
         {/* Fond d'illustration avec superposition sombre et subtil dégradé corail/soleil */}
-        <div className="absolute inset-0 opacity-60">
+        <motion.div style={{ y: heroBgY, scale: heroBgScale }} className="absolute inset-0 opacity-60">
           <HomeImage
             src={HOME_IMAGES.hero.src}
             alt={HOME_IMAGES.hero.alt}
@@ -92,8 +125,15 @@ export default function HomePage() {
             sizes="100vw"
             priority
           />
-        </div>
+        </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 to-ink/60" />
+        <div className="absolute inset-0 court-lines-dark opacity-30 pointer-events-none" aria-hidden />
+        <motion.div
+          aria-hidden
+          className="absolute -top-40 -right-40 w-[36rem] h-[36rem] rounded-full bg-sun/15 blur-3xl pointer-events-none"
+          animate={{ scale: [1, 1.12, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        />
 
         <div className="relative z-10 max-w-content mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
@@ -112,9 +152,7 @@ export default function HomePage() {
                 </span>
               </div>
               <a
-                href="https://www.mades.world/en/programs"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#contact"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sun text-ink font-bold text-xs uppercase tracking-[0.15em] hover:bg-coral hover:text-white transition-colors shadow-lg shadow-sun/20"
               >
                 <Users size={15} />
@@ -122,9 +160,23 @@ export default function HomePage() {
               </a>
             </div>
 
-            <h1 className="font-display text-5xl md:text-7xl font-black leading-[1] tracking-tight mb-6">
-              Vivez l&rsquo;énergie du <span className="text-coral">Beach Tennis</span>.
-            </h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 0.15 }}
+              className="font-display text-5xl md:text-7xl font-black leading-[1] tracking-tight mb-6"
+            >
+              Vivez l&rsquo;énergie du{" "}
+              <motion.span
+                className="text-coral inline-block"
+                initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}
+              >
+                Beach Tennis
+              </motion.span>
+              .
+            </motion.h1>
 
             <p className="text-base md:text-lg text-white/75 max-w-xl leading-relaxed mb-8">
               Réservez votre terrain en quelques secondes, profitez d&rsquo;un équipement professionnel et rejoignez la communauté la plus dynamique du littoral.
@@ -154,7 +206,7 @@ export default function HomePage() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="lg:col-span-5"
           >
-            <div className="bg-white/10 backdrop-blur-xl border border-white/15 p-8 rounded-[2.5rem] shadow-2xl space-y-6">
+            <div className="animate-float bg-white/10 backdrop-blur-xl border border-white/15 p-8 rounded-[2.5rem] shadow-2xl space-y-6">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-sun/20 flex items-center justify-center text-sun">
@@ -165,7 +217,8 @@ export default function HomePage() {
                     <p className="text-sm font-bold text-white">Ce weekend (Ven - Dim)</p>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-coral text-white text-[10px] font-bold uppercase tracking-widest rounded-full">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-coral text-white text-[10px] font-bold uppercase tracking-widest rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse-dot" />
                   Ouvert
                 </span>
               </div>
@@ -200,29 +253,34 @@ export default function HomePage() {
       {/* ------------------------------ BANDE DE CHIFFRES ------------------------------ */}
       <section className="relative -mt-6 md:-mt-10 z-10">
         <div className="max-w-content mx-auto px-6">
-          <div className="bg-white rounded-[2.5rem] shadow-xl shadow-ink/5 border border-ink/5 grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-ink/8">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
+            className="bg-white rounded-[2.5rem] shadow-xl shadow-ink/5 border border-ink/5 grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-ink/8"
+          >
             {STATS.map((s) => (
-              <div key={s.label} className="p-8 text-center">
-                <p className="text-2xl md:text-3xl font-display font-black text-coral tracking-tight mb-1">
-                  {s.value}
+              <div key={s.label} className="group p-8 text-center hover:bg-sandlight/60 transition-colors first:rounded-tl-[2.5rem] md:first:rounded-l-[2.5rem] last:rounded-br-[2.5rem] md:last:rounded-r-[2.5rem]">
+                <p className="text-2xl md:text-3xl font-display font-black text-coral tracking-tight mb-1 tabular group-hover:scale-110 transition-transform duration-300">
+                  <AnimatedStat value={s.value} />
                 </p>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink/50">
                   {s.label}
                 </p>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ------------------------------ BANDEAU PARTENAIRES (teaser, version complète plus bas) ------------------------------ */}
-      <section className="max-w-content mx-auto px-6 pb-8">
+      <motion.section {...reveal} className="max-w-content mx-auto px-6 pb-8 pt-8">
         <a
           href="#partenaires"
           className="group flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-ink/10 bg-white p-6 hover:border-coral/40 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-full bg-sun/15 text-sun flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-full bg-sun/15 text-sun flex items-center justify-center shrink-0 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-500">
               <Waves size={20} />
             </div>
             <div>
@@ -239,18 +297,18 @@ export default function HomePage() {
             <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </span>
         </a>
-      </section>
+      </motion.section>
 
       {/* ------------------------------ VOIR NOS PLAGES ------------------------------ */}
       <BeachesShowcase />
 
       {/* ------------------------------ ESPACE PUBLICITAIRE ------------------------------ */}
-      <section className="max-w-content mx-auto px-6 pt-8 md:pt-10">
+      <section className="max-w-content mx-auto px-6 pt-6 md:pt-8">
         <AdBanner placement="accueil" />
       </section>
 
       {/* ------------------------------ ACTIVITÉS — SPLITS ALTERNÉS ------------------------------ */}
-      <section id="activites" className="py-14 md:py-16 space-y-14 md:space-y-16">
+      <section id="activites" className="pt-10 md:pt-14 pb-28 md:pb-32 space-y-28 md:space-y-32">
         {ACTIVITES.map((a, i) => (
           <div
             key={a.title}
@@ -259,10 +317,10 @@ export default function HomePage() {
             }`}
           >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, x: i % 2 === 1 ? 40 : -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease: EASE }}
               className="lg:col-span-5"
             >
               <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">
@@ -274,17 +332,17 @@ export default function HomePage() {
               <p className="text-ink/60 leading-relaxed mb-8">{a.desc}</p>
               <Link
                 href={a.cta.href}
-                className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-widest hover:text-coral transition-colors"
+                className="group inline-flex items-center gap-2 font-bold text-sm uppercase tracking-widest hover:text-coral transition-colors"
               >
-                {a.cta.label} <ChevronRight size={15} />
+                {a.cta.label} <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
+              initial={{ opacity: 0, scale: 0.94, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.9, ease: EASE }}
               className="lg:col-span-7"
             >
               <HomeImage
@@ -292,6 +350,7 @@ export default function HomePage() {
                 alt={a.image.alt}
                 className="aspect-[16/10]"
                 sizes="(max-width: 1024px) 100vw, 58vw"
+                hoverScale
                 clipPath={
                   i % 2 === 0
                     ? "polygon(0 0, 100% 0, 100% 100%, 6% 100%)"
@@ -304,7 +363,7 @@ export default function HomePage() {
       </section>
 
       {/* ------------------------------ STRIP RAPIDE — AUTRES FAÇONS DE JOUER ------------------------------ */}
-      <section className="max-w-content mx-auto px-6 pb-8">
+      <motion.section {...reveal} className="max-w-content mx-auto px-6 pb-8">
         <div className="rounded-[2rem] border border-ink/10 bg-white p-6 flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-ink/60 font-semibold">
             Et aussi : la boutique d&rsquo;accessoires, le classement des joueurs et nos actualités.
@@ -330,23 +389,31 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ------------------------------ GALERIE HORIZONTALE ------------------------------ */}
       <FeaturedArticles />
       <PartnerLogos />
       <section id="galerie" className="py-8 pb-28 md:pb-32">
-        <div className="max-w-content mx-auto px-6 mb-10">
+        <motion.div {...reveal} className="max-w-content mx-auto px-6 mb-10">
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">
             L&rsquo;ambiance
           </span>
           <h3 className="font-display text-3xl md:text-4xl font-black tracking-tight mt-3 text-ink">
             L&rsquo;esprit du club, capturé sur le sable.
           </h3>
-        </div>
+        </motion.div>
         <div className="max-w-content mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-5">
-          {GALERIE.map((g) => (
-            <motion.div key={g.label} whileHover={{ y: -6 }} className="aspect-[3/4]">
+          {GALERIE.map((g, i) => (
+            <motion.div
+              key={g.label}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.7, ease: EASE, delay: i * 0.1 }}
+              whileHover={{ y: -8 }}
+              className="aspect-[3/4]"
+            >
               <HomeImage
                 src={g.src}
                 alt={g.alt}
@@ -366,8 +433,14 @@ export default function HomePage() {
 
       {/* ------------------------------ CITATION SUR FOND SOLEIL ------------------------------ */}
       <section className="bg-sun py-24 md:py-28">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <Waves size={36} className="mx-auto mb-8 text-ink" />
+        <motion.div {...reveal} className="max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="w-fit mx-auto"
+          >
+            <Waves size={36} className="mx-auto mb-8 text-ink" />
+          </motion.div>
           <p className="font-display text-2xl md:text-4xl font-black tracking-tight leading-tight text-ink">
             « Un terrain bien tenu, un accueil chaleureux et un coach
             passionné : c&rsquo;est tout ce qu&rsquo;il faut pour donner envie de
@@ -376,13 +449,20 @@ export default function HomePage() {
           <p className="mt-8 text-xs font-bold uppercase tracking-widest text-ink/60">
             — Coach principal, plage de Cotonou
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* ------------------------------ DEVENIR PLAGE PARTENAIRE ------------------------------ */}
-      <section id="partenaires" className="bg-ink py-28 md:py-32 text-white">
-        <div className="max-w-content mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
-          <div className="lg:col-span-7">
+      <section id="partenaires" className="relative overflow-hidden bg-ink py-28 md:py-32 text-white">
+        <div className="absolute inset-0 court-lines-dark opacity-30 pointer-events-none" aria-hidden />
+        <div className="relative max-w-content mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="lg:col-span-7"
+          >
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">
               Développement &amp; partenariats
             </span>
@@ -408,9 +488,15 @@ export default function HomePage() {
                 <p className="font-display font-black text-xl text-sun">4 à 6 semaines</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="lg:col-span-5">
+          <motion.div
+            initial={{ opacity: 0, x: 40, scale: 0.96 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
+            className="lg:col-span-5"
+          >
             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 text-center">
               <Waves size={32} className="mx-auto mb-6 text-sun" />
               <h3 className="font-display text-2xl font-black uppercase tracking-tight mb-4">
@@ -426,7 +512,7 @@ export default function HomePage() {
                 Nous contacter
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -435,22 +521,26 @@ export default function HomePage() {
       {/* ------------------------------ FORMULES ADAPTÉES ------------------------------ */}
       <section id="formules" className="py-28 md:py-32">
         <div className="max-w-content mx-auto px-6">
-          <div className="mb-16">
+          <motion.div {...reveal} className="mb-16">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">
               Pour chaque profil
             </span>
             <h3 className="font-display text-3xl md:text-4xl font-black tracking-tight mt-3 text-ink">
               Des formules adaptées à chacun.
             </h3>
-          </div>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {FORMULES.map((f) => (
+            {FORMULES.map((f, i) => (
               <motion.div
                 key={f.title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.12 }}
                 whileHover={{ y: -5 }}
-                className="bg-white border border-ink/8 p-10 rounded-[3rem] shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-all"
+                className="group bg-white border border-ink/8 p-10 rounded-[3rem] shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow"
               >
-                <div className="w-14 h-14 bg-sandlight rounded-2xl flex items-center justify-center mb-8 text-coral">
+                <div className="w-14 h-14 bg-sandlight rounded-2xl flex items-center justify-center mb-8 text-coral group-hover:bg-coral group-hover:text-white group-hover:rotate-[-8deg] transition-all duration-500">
                   {f.icon}
                 </div>
                 <h4 className="font-display text-2xl font-black mb-4 tracking-tight text-ink">
@@ -466,8 +556,13 @@ export default function HomePage() {
       {/* ------------------------------ CONTACT ------------------------------ */}
       <section id="contact" className="pb-28 md:pb-32">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="bg-ink rounded-[3.5rem] p-12 md:p-16 text-white grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
+          <motion.div
+            {...reveal}
+            className="relative overflow-hidden bg-ink rounded-[3.5rem] p-12 md:p-16 text-white grid grid-cols-1 md:grid-cols-2 gap-12"
+          >
+            <div className="absolute inset-0 court-lines-dark opacity-30 pointer-events-none" aria-hidden />
+            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sun/15 blur-3xl pointer-events-none" aria-hidden />
+            <div className="relative">
               <h3 className="font-display text-3xl md:text-4xl font-black tracking-tight mb-6">
                 Parlons de votre projet.
               </h3>
@@ -487,8 +582,10 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <ContactForm />
-          </div>
+            <div className="relative">
+              <ContactForm />
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>

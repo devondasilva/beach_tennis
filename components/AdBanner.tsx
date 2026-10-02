@@ -45,14 +45,14 @@ export default function AdBanner({
       href={ad.targetUrl}
       target="_blank"
       rel="noopener noreferrer sponsored"
-      className={`block rounded-card overflow-hidden border border-ink/10 group ${className}`}
+      className={`block rounded-[2rem] overflow-hidden border border-ink/[0.08] shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow group ${className}`}
     >
-      <div className="relative w-full aspect-[16/5] bg-sandlight">
+      <div className="relative w-full aspect-[16/5] bg-sandlight overflow-hidden">
         <Image
           src={ad.imageUrl}
           alt={ad.title}
           fill
-          className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-transform duration-700"
           sizes="100vw"
         />
         <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-widest bg-ink/70 text-sandlight px-2 py-1 rounded-full">

@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { CalendarDays, GraduationCap, LogOut, ShoppingBag, Trophy, UserCircle } from "lucide-react";
 import { formatFCFA } from "@/lib/pricing";
+import PageHero, { PageBody } from "@/components/ui/PageHero";
+import PageLoading from "@/components/ui/PageLoading";
+import { Reveal } from "@/components/motion/Reveal";
+import { PAGE_IMAGES } from "@/lib/page-images";
+import { ui } from "@/lib/ui";
 
 interface Player {
   id: string;
@@ -109,171 +117,210 @@ export default function ProfilClient() {
     router.refresh();
   }
 
-  if (resolving) {
-    return (
-      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 text-ink/60">
-        Chargement…
-      </div>
-    );
-  }
+  if (resolving || (resolvedId && !data && !error)) return <PageLoading />;
 
-  if (!resolvedId) {
+  if (!resolvedId || error || !data) {
     return (
-      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
-        <div className="max-w-md">
-          <p className="tag-label mb-3">Mon profil</p>
-          <h1 className="font-display text-4xl text-ink">Retrouvez votre espace</h1>
-          <p className="mt-3 text-ink/70">
-            Connectez-vous depuis la page de connexion, ou utilisez le lien personnel
-            (QR code, points de fidélité, historique) reçu après une réservation, un
-            cours, une commande ou une inscription à un événement.
-          </p>
-          <a
-            href="/login"
-            className="mt-6 inline-block rounded-card bg-ink text-white font-semibold px-6 py-3 hover:bg-coral transition-colors"
-          >
-            Se connecter
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading || !data) {
-    return (
-      <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16 text-ink/60">
-        {error ? (
-          <p className="text-sm text-coral bg-coral/10 rounded-card px-4 py-3 inline-block">
-            {error}
-          </p>
-        ) : (
-          "Chargement…"
-        )}
+      <div className="bg-sandlight">
+        <PageHero
+          badge="Mon profil"
+          icon={<UserCircle size={15} />}
+          title="Retrouvez votre"
+          accent="espace."
+          subtitle="QR code, points de fidélité et historique de vos séances, cours, commandes et tournois."
+          image={PAGE_IMAGES.compte}
+          crumbs={[{ href: "/", label: "Accueil" }]}
+        />
+        <PageBody>
+          <Reveal className={`${ui.card} max-w-xl mx-auto p-10 text-center`}>
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-ink text-sun flex items-center justify-center">
+              <UserCircle size={28} />
+            </div>
+            {error ? (
+              <p className={`mt-6 ${ui.error}`}>{error}</p>
+            ) : (
+              <p className="mt-6 text-ink/60 leading-relaxed">
+                Connectez-vous depuis la page de connexion, ou utilisez le lien personnel reçu après une
+                réservation, un cours, une commande ou une inscription à un événement.
+              </p>
+            )}
+            <Link href="/login" className={`mt-8 ${ui.btnPrimary}`}>
+              Se connecter
+            </Link>
+          </Reveal>
+        </PageBody>
       </div>
     );
   }
 
   const { player, bookings, lessons, orders, events } = data;
+  const nextReward = 200 - (player.loyaltyPoints % 200);
+  const progress = (player.loyaltyPoints % 200) / 200;
+  const totalSpent =
+    bookings.reduce((s, b) => s + b.price, 0) + lessons.reduce((s, l) => s + l.price, 0) + orders.reduce((s, o) => s + o.total, 0);
+
+  const sections: {
+    icon: typeof CalendarDays;
+    title: string;
+    empty: string;
+    cta?: { href: string; label: string };
+    items: { key: string; main: string; sub: string; amount?: number }[];
+  }[] = [
+    {
+      icon: CalendarDays,
+      title: "Réservations",
+      empty: "Aucune réservation pour le moment.",
+      cta: { href: "/reservation", label: "Réserver un créneau" },
+      items: bookings.map((b) => ({ key: b.id, main: b.tariffLabel, sub: `${b.beachName} · ${b.date} à ${b.time}`, amount: b.price })),
+    },
+    {
+      icon: GraduationCap,
+      title: "Cours avec un coach",
+      empty: "Aucun cours réservé pour le moment.",
+      cta: { href: "/cours", label: "Réserver un cours" },
+      items: lessons.map((l) => ({ key: l.id, main: l.formulaLabel, sub: `avec ${l.coach} · ${l.date} à ${l.time}`, amount: l.price })),
+    },
+    {
+      icon: Trophy,
+      title: "Événements",
+      empty: "Aucune inscription à un tournoi pour le moment.",
+      cta: { href: "/evenements", label: "Voir les événements" },
+      items: events.map((e) => ({ key: e.id, main: e.title, sub: e.date })),
+    },
+    {
+      icon: ShoppingBag,
+      title: "Commandes boutique",
+      empty: "Aucune commande pour le moment.",
+      cta: { href: "/boutique", label: "Voir la boutique" },
+      items: orders.map((o) => ({ key: o.id, main: o.items.map((i) => `${i.qty}× ${i.name}`).join(", "), sub: "Retrait au stand du coach", amount: o.total })),
+    },
+  ];
 
   return (
-    <div className="max-w-content mx-auto px-6 pt-[calc(var(--nav-height,4.5rem)+1.5rem)] pb-16">
-      <div className="grid md:grid-cols-12 gap-10">
-        <div className="md:col-span-4">
-          <div className="rounded-card bg-ink text-sandlight p-6 text-center">
-            <p className="tag-label !text-sun">Carte membre</p>
-            <h1 className="font-display text-2xl mt-2">{player.name}</h1>
-            <p className="text-sandlight/70 text-sm">{player.phone}</p>
-            <p className="mt-1 text-sm text-sun">{LEVEL_LABEL[player.level] ?? player.level}</p>
+    <div className="bg-sandlight">
+      <PageHero
+        badge="Mon espace joueur"
+        icon={<UserCircle size={15} />}
+        title="Bonjour"
+        accent={`${player.name.split(" ")[0]}.`}
+        subtitle="Votre carte membre, vos points de fidélité et tout votre historique au même endroit."
+        image={PAGE_IMAGES.compte}
+        crumbs={[{ href: "/", label: "Accueil" }]}
+      >
+        <div className="flex flex-wrap gap-3">
+          {[
+            { v: bookings.length, l: "séances" },
+            { v: lessons.length, l: "cours" },
+            { v: events.length, l: "tournois" },
+          ].map((x) => (
+            <span key={x.l} className="inline-flex items-baseline gap-1.5 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm">
+              <span className="font-display text-lg font-black text-sun">{x.v}</span> {x.l}
+            </span>
+          ))}
+        </div>
+      </PageHero>
 
-            <div className="mt-4 bg-white rounded-card p-3 inline-block">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/api/qrcode/${player.id}`}
-                alt={`QR code d'enregistrement de ${player.name}`}
-                width={160}
-                height={160}
-              />
+      <PageBody>
+        <div className="grid lg:grid-cols-12 gap-6 items-start">
+          <Reveal className="lg:col-span-4 lg:sticky lg:top-[calc(var(--nav-height,4.5rem)+1.5rem)]">
+            <div className="relative overflow-hidden rounded-[2rem] bg-ink text-sandlight p-7 text-center shadow-xl shadow-ink/20">
+              <div className="absolute inset-0 court-lines-dark opacity-40" aria-hidden />
+              <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/20 blur-3xl" aria-hidden />
+              <div className="relative">
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Carte membre</p>
+                <h1 className="font-display text-2xl font-black mt-2">{player.name}</h1>
+                <p className="text-sandlight/60 text-sm">{player.phone}</p>
+                <span className="mt-2 inline-block text-[10px] font-bold uppercase tracking-widest bg-sun/15 text-sun px-3 py-1 rounded-full">
+                  {LEVEL_LABEL[player.level] ?? player.level}
+                </span>
+
+                <motion.div
+                  initial={{ rotateY: 90, opacity: 0 }}
+                  animate={{ rotateY: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                  className="mt-6 bg-white rounded-2xl p-3 inline-block shadow-lg"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/api/qrcode/${player.id}`} alt={`QR code d'enregistrement de ${player.name}`} width={170} height={170} />
+                </motion.div>
+                <p className="mt-2 text-[11px] text-sandlight/50">À présenter à l&rsquo;arrivée sur la plage</p>
+
+                <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-5 text-left">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-sandlight/50">Points de fidélité</p>
+                      <p className="font-display text-4xl font-black text-sun">{player.loyaltyPoints}</p>
+                    </div>
+                    <Trophy size={28} className="text-sun/60" />
+                  </div>
+                  <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-sun"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress * 100}%` }}
+                      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-sandlight/60">
+                    Encore <span className="font-bold text-sun">{nextReward} pts</span> pour une séance offerte
+                  </p>
+                </div>
+
+                <p className="mt-5 text-xs text-sandlight/50">
+                  Total dépensé : <span className="font-semibold text-sandlight/80">{formatFCFA(totalSpent)}</span>
+                </p>
+
+                {isOwnSession && (
+                  <button
+                    onClick={handleLogout}
+                    className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-sandlight/60 hover:text-coral transition-colors"
+                  >
+                    <LogOut size={14} /> Se déconnecter
+                  </button>
+                )}
+              </div>
             </div>
+          </Reveal>
 
-            <div className="rule bg-sandlight/20 my-4" />
-            <p className="text-sm text-sandlight/75">Points de fidélité</p>
-            <p className="font-display text-3xl text-sun">{player.loyaltyPoints}</p>
-            <p className="text-xs text-sandlight/60 mt-1">
-              200 points = une séance offerte
-            </p>
-
-            {isOwnSession && (
-              <button
-                onClick={handleLogout}
-                className="mt-5 text-xs font-bold uppercase tracking-widest text-sandlight/70 hover:text-coral transition-colors"
-              >
-                Se déconnecter
-              </button>
-            )}
+          <div className="lg:col-span-8 space-y-6">
+            {sections.map((sec, i) => (
+              <Reveal key={sec.title} delay={i * 0.06} className={`${ui.card} p-6 md:p-7`}>
+                <div className="flex items-center justify-between gap-4 mb-5">
+                  <h2 className="flex items-center gap-3 font-display text-xl md:text-2xl font-black tracking-tight text-ink">
+                    <span className="w-10 h-10 rounded-xl bg-coral/10 text-coral flex items-center justify-center">
+                      <sec.icon size={18} />
+                    </span>
+                    {sec.title}
+                  </h2>
+                  <span className="text-xs font-bold uppercase tracking-widest text-ink/40">{sec.items.length}</span>
+                </div>
+                {sec.items.length === 0 ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-sandlight px-5 py-4">
+                    <p className="text-sm text-ink/60">{sec.empty}</p>
+                    {sec.cta && (
+                      <Link href={sec.cta.href} className="text-xs font-bold uppercase tracking-widest text-coral hover:underline">
+                        {sec.cta.label} →
+                      </Link>
+                    )}
+                  </div>
+                ) : (
+                  <ul className="divide-y divide-ink/[0.06]">
+                    {sec.items.map((it) => (
+                      <li key={it.key} className="flex items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-ink text-sm truncate">{it.main}</p>
+                          <p className="text-xs text-ink/50 truncate">{it.sub}</p>
+                        </div>
+                        {it.amount !== undefined && <span className="font-bold text-ink text-sm whitespace-nowrap">{formatFCFA(it.amount)}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Reveal>
+            ))}
           </div>
         </div>
-
-        <div className="md:col-span-8 space-y-10">
-          <section>
-            <h2 className="font-display text-xl text-ink mb-4">Réservations</h2>
-            {bookings.length === 0 ? (
-              <p className="text-sm text-ink/60">Aucune réservation pour le moment.</p>
-            ) : (
-              <ul className="space-y-2">
-                {bookings.map((b) => (
-                  <li
-                    key={b.id}
-                    className="flex items-center justify-between rounded-card border border-ink/10 px-4 py-3 text-sm"
-                  >
-                    <span>
-                      {b.tariffLabel} — {b.beachName} — {b.date} à {b.time}
-                    </span>
-                    <span className="font-semibold text-ink">{formatFCFA(b.price)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section>
-            <h2 className="font-display text-xl text-ink mb-4">Cours avec un coach</h2>
-            {lessons.length === 0 ? (
-              <p className="text-sm text-ink/60">Aucun cours réservé pour le moment.</p>
-            ) : (
-              <ul className="space-y-2">
-                {lessons.map((l) => (
-                  <li
-                    key={l.id}
-                    className="flex items-center justify-between rounded-card border border-ink/10 px-4 py-3 text-sm"
-                  >
-                    <span>
-                      {l.formulaLabel} avec {l.coach} — {l.date} à {l.time}
-                    </span>
-                    <span className="font-semibold text-ink">{formatFCFA(l.price)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section>
-            <h2 className="font-display text-xl text-ink mb-4">Événements</h2>
-            {events.length === 0 ? (
-              <p className="text-sm text-ink/60">Aucune inscription à un tournoi pour le moment.</p>
-            ) : (
-              <ul className="space-y-2">
-                {events.map((e) => (
-                  <li
-                    key={e.id}
-                    className="rounded-card border border-ink/10 px-4 py-3 text-sm"
-                  >
-                    {e.title} — {e.date}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section>
-            <h2 className="font-display text-xl text-ink mb-4">Commandes boutique</h2>
-            {orders.length === 0 ? (
-              <p className="text-sm text-ink/60">Aucune commande pour le moment.</p>
-            ) : (
-              <ul className="space-y-2">
-                {orders.map((o) => (
-                  <li
-                    key={o.id}
-                    className="flex items-center justify-between rounded-card border border-ink/10 px-4 py-3 text-sm"
-                  >
-                    <span>{o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")}</span>
-                    <span className="font-semibold text-ink">{formatFCFA(o.total)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </div>
-      </div>
+      </PageBody>
     </div>
   );
 }

@@ -22,14 +22,14 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(function PasswordInput
         {...props}
         ref={ref}
         type={visible ? "text" : "password"}
-        className={`w-full rounded-card border border-ink/20 px-3 py-2 pr-11 bg-white ${className}`}
+        className={`w-full rounded-2xl border-2 border-ink/10 bg-white px-4 py-3.5 pr-12 font-semibold text-ink placeholder:text-ink/35 focus:border-coral focus:outline-none transition-colors ${className}`}
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
         aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
         tabIndex={-1}
-        className="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-ink/50 hover:text-ink transition-colors"
+        className="absolute right-1 top-0 h-full w-11 flex items-center justify-center text-ink/50 hover:text-ink transition-colors"
       >
         {visible ? <EyeOff size={17} /> : <Eye size={17} />}
       </button>

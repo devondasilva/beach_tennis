@@ -45,8 +45,8 @@ export default function OrderForm({ product }: { product: Product }) {
 
   if (success) {
     return (
-      <div className="mt-4 rounded-card bg-lagoon text-sandlight p-4 text-sm">
-        <p className="font-semibold">Commande enregistrée — {formatFCFA(success.total)}</p>
+      <div className="mt-4 rounded-2xl bg-ink text-sandlight p-5 text-sm">
+        <p className="font-bold text-sun">Commande enregistrée — {formatFCFA(success.total)}</p>
         <p className="mt-1 text-sandlight/85">À récupérer sur place, au stand du coach.</p>
         <Link
           href={`/profil?playerId=${success.playerId}`}
@@ -63,7 +63,7 @@ export default function OrderForm({ product }: { product: Product }) {
       <button
         onClick={() => setOpen(true)}
         disabled={product.stock === 0}
-        className="mt-4 w-full rounded-card border border-ink/20 text-ink font-semibold py-2 text-sm hover:border-coral hover:text-coral transition-colors disabled:opacity-50"
+        className="mt-5 w-full rounded-2xl bg-ink text-white font-bold uppercase tracking-widest py-3.5 text-xs hover:bg-coral transition-colors disabled:opacity-40 disabled:hover:bg-ink"
       >
         {product.stock === 0 ? "Rupture de stock" : "Commander"}
       </button>
@@ -71,14 +71,14 @@ export default function OrderForm({ product }: { product: Product }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+    <form onSubmit={handleSubmit} className="mt-5 space-y-3">
       <div className="flex gap-2">
         <input
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Nom complet"
-          className="flex-1 rounded-card border border-ink/20 px-3 py-2 text-sm"
+          className="flex-1 min-w-0 rounded-xl border-2 border-ink/10 bg-white px-3 py-2.5 text-sm font-semibold text-ink placeholder:text-ink/35 focus:border-coral focus:outline-none transition-colors"
         />
         <input
           type="number"
@@ -86,7 +86,8 @@ export default function OrderForm({ product }: { product: Product }) {
           max={product.stock}
           value={qty}
           onChange={(e) => setQty(Number(e.target.value))}
-          className="w-16 rounded-card border border-ink/20 px-2 py-2 text-sm"
+          aria-label="Quantité"
+          className="w-20 rounded-xl border-2 border-ink/10 bg-white px-3 py-2.5 text-sm font-semibold text-ink placeholder:text-ink/35 focus:border-coral focus:outline-none transition-colors"
         />
       </div>
       <input
@@ -94,21 +95,21 @@ export default function OrderForm({ product }: { product: Product }) {
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="Téléphone"
-        className="w-full rounded-card border border-ink/20 px-3 py-2 text-sm"
+        className="w-full rounded-xl border-2 border-ink/10 bg-white px-3 py-2.5 text-sm font-semibold text-ink placeholder:text-ink/35 focus:border-coral focus:outline-none transition-colors"
       />
-      {error && <p className="text-xs text-coral">{error}</p>}
+      {error && <p className="text-xs font-semibold text-coral bg-coral/10 rounded-xl px-3 py-2">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 rounded-card bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+          className="flex-1 rounded-xl bg-coral text-white font-bold uppercase tracking-wider py-3 text-xs hover:bg-ink transition-colors disabled:opacity-60"
         >
           {loading ? "…" : `Payer ${formatFCFA(product.price * qty)}`}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-card border border-ink/20 px-3 text-sm text-ink/70"
+          className="rounded-xl border-2 border-ink/10 px-4 text-xs font-bold uppercase tracking-wider text-ink/60 hover:border-ink/30"
         >
           Annuler
         </button>
