@@ -31,12 +31,17 @@ export function Card({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: EASE, delay }}
-      className={`rounded-2xl bg-white border border-ink/[0.07] shadow-[0_1px_2px_rgba(11,46,61,0.04),0_12px_32px_-20px_rgba(11,46,61,0.18)] ${className}`}
+      className={`card min-w-0 transition-shadow duration-500 hover:shadow-soft ${className}`}
     >
       {(title || action) && (
         <header className="flex items-start justify-between gap-4 px-5 pt-5">
           <div>
-            {title && <h3 className="text-[15px] font-bold text-ink">{title}</h3>}
+            {title && (
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span className="h-1.5 w-1.5 rounded-full bg-orange" />
+                {title}
+              </h3>
+            )}
             {subtitle && <p className="text-xs text-muted mt-0.5">{subtitle}</p>}
           </div>
           {action}
@@ -47,10 +52,10 @@ export function Card({
   );
 }
 
-export function DeltaBadge({ delta, invert = false, compact = false }: { delta: number | null; invert?: boolean; compact?: boolean }) {
+export function DeltaBadge({ delta, invert = false, compact = false, onDark = false }: { delta: number | null; invert?: boolean; compact?: boolean; onDark?: boolean }) {
   if (delta === null) {
     return (
-      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-series-2/10 px-2 py-0.5 text-[11px] font-semibold text-[#0C5B5A]">
+      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-series-2/10 px-2 py-0.5 text-[11px] font-semibold text-[#1d5fae]">
         Nouveau
       </span>
     );
@@ -59,7 +64,7 @@ export function DeltaBadge({ delta, invert = false, compact = false }: { delta: 
   const flat = Math.abs(pct) < 0.5;
   const good = invert ? pct < 0 : pct > 0;
   const Icon = flat ? Minus : pct > 0 ? ArrowUpRight : ArrowDownRight;
-  const tone = flat ? "bg-ink/5 text-muted" : good ? "bg-[#1a7f37]/10 text-[#1a7f37]" : "bg-[#cf222e]/10 text-[#cf222e]";
+  const tone = onDark ? "bg-white/20 text-white" : flat ? "bg-ink/5 text-muted" : good ? "bg-[#1a7f37]/10 text-[#1a7f37]" : "bg-[#cf222e]/10 text-[#cf222e]";
   return (
     <span className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold tabular ${tone}`}>
       <Icon size={12} strokeWidth={2.5} />
@@ -93,37 +98,45 @@ export function KpiCard({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: EASE, delay }}
-      whileHover={{ y: -3 }}
-      className={`group relative overflow-hidden rounded-2xl p-5 border transition-shadow ${
-        highlight
-          ? "bg-ink text-white border-ink shadow-[0_20px_40px_-20px_rgba(11,46,61,0.6)]"
-          : "bg-white border-ink/[0.07] shadow-[0_1px_2px_rgba(11,46,61,0.04),0_12px_32px_-20px_rgba(11,46,61,0.18)] hover:shadow-[0_20px_40px_-20px_rgba(11,46,61,0.3)]"
+      className={`group relative flex min-w-0 flex-col justify-between overflow-hidden rounded-card p-5 transition-all duration-500 hover:-translate-y-1 hover:shadow-lift ${
+        highlight ? "bg-orange text-white" : "border border-line bg-white"
       }`}
     >
-      {highlight && <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-coral/30 blur-3xl" aria-hidden />}
-      <div className="relative flex items-start justify-between">
-        <p className={`label-mono !text-[0.62rem] ${highlight ? "text-white/60" : "text-muted"}`}>{label}</p>
+      <Icon
+        size={110}
+        strokeWidth={1}
+        className={`pointer-events-none absolute -bottom-5 -right-5 transition-transform duration-700 group-hover:-rotate-12 group-hover:scale-110 ${
+          highlight ? "text-white/15" : "text-ink/[0.04]"
+        }`}
+      />
+      <div className="relative flex items-center justify-between">
         <span
-          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-500 group-hover:rotate-[-8deg] ${
-            highlight ? "bg-coral text-white" : "bg-coral/10 text-coral"
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:rotate-[-8deg] ${
+            highlight ? "bg-white text-orange" : "bg-orangeL text-orange"
           }`}
         >
-          <Icon size={17} />
+          <Icon size={21} />
         </span>
-      </div>
-      <p className="relative mt-3 text-[1.75rem] font-bold tracking-tight leading-none">
-        <CountUp value={kpi.value} format={format} />
-      </p>
-      <div className="relative mt-3 flex items-center justify-between gap-2 min-h-[28px]">
-        <div className="flex items-center gap-2">
-          <DeltaBadge delta={kpi.delta} invert={invertDelta} compact />
-          <span className={`text-[11px] whitespace-nowrap ${highlight ? "text-white/50" : "text-muted"}`} title="Comparaison avec la période précédente de même durée">{hint ?? "vs préc."}</span>
-        </div>
         {kpi.spark.length > 1 && (
-          <div className="w-16 h-7 shrink-0">
-            <Sparkline data={kpi.spark} color={highlight ? "#F4A63B" : "#E8593B"} />
+          <div className="h-8 w-20 shrink-0">
+            <Sparkline data={kpi.spark} color={highlight ? "#FFFFFF" : "#FF4D00"} />
           </div>
         )}
+      </div>
+      <div className="relative mt-6">
+        <p className={`font-mono text-[11px] uppercase tracking-wider ${highlight ? "text-white/75" : "text-mutedfg"}`}>{label}</p>
+        <p className="h-display mt-1 text-4xl leading-none">
+          <CountUp value={kpi.value} format={format} />
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <DeltaBadge delta={kpi.delta} invert={invertDelta} compact onDark={highlight} />
+          <span
+            className={`whitespace-nowrap text-[11px] ${highlight ? "text-white/70" : "text-mutedfg"}`}
+            title="Comparaison avec la période précédente de même durée"
+          >
+            {hint ?? "vs période préc."}
+          </span>
+        </div>
       </div>
     </motion.div>
   );
@@ -169,7 +182,7 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-export function ProgressBar({ value, color = "#E8593B", delay = 0 }: { value: number; color?: string; delay?: number }) {
+export function ProgressBar({ value, color = "#FF4D00", delay = 0 }: { value: number; color?: string; delay?: number }) {
   return (
     <div className="h-2 rounded-full bg-ink/[0.06] overflow-hidden">
       <motion.div
@@ -197,12 +210,12 @@ export function SkeletonDashboard() {
     <div className="space-y-5">
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="skeleton h-[136px] rounded-2xl" />
+          <div key={i} className="skeleton h-[170px] rounded-card" />
         ))}
       </div>
       <div className="grid xl:grid-cols-3 gap-4">
-        <div className="skeleton h-[380px] rounded-2xl xl:col-span-2" />
-        <div className="skeleton h-[380px] rounded-2xl" />
+        <div className="skeleton h-[380px] rounded-card xl:col-span-2" />
+        <div className="skeleton h-[380px] rounded-card" />
       </div>
     </div>
   );

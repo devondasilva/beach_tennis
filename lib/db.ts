@@ -68,6 +68,7 @@ export function removeSiteImage(slot: SiteImageSlot): string | undefined {
 
 // ---------- Admins ----------
 export function getAdmins(): Admin[] {
+  if (!fs.existsSync(path.join(dataDir, "admins.json"))) return [];
   return readJSON<Admin[]>("admins.json");
 }
 

@@ -9,9 +9,9 @@ export default function PageLoading() {
           <div className="h-5 w-full max-w-md rounded-full bg-white/10 animate-pulse" />
         </div>
       </div>
-      <div className="max-w-content mx-auto px-6 -mt-12 grid md:grid-cols-3 gap-6">
+      <div className="max-w-content mx-auto px-6 grid md:grid-cols-3 gap-6">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="skeleton h-64 rounded-[2rem]" />
+          <div key={i} className="skeleton h-64 rounded-card" />
         ))}
       </div>
     </div>

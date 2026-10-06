@@ -43,11 +43,11 @@ export default function EvolutionChart({ monthly }: { monthly: BeachMonthlyStat[
     <div className="grid sm:grid-cols-2 gap-6">
       <div>
         <p className="text-xs font-semibold text-ink/60 mb-3">Recettes par mois</p>
-        <MiniBarChart data={monthly} valueKey="revenue" color="#E8593B" format={(v) => formatFCFA(v)} />
+        <MiniBarChart data={monthly} valueKey="revenue" color="#FF4D00" format={(v) => formatFCFA(v)} />
       </div>
       <div>
         <p className="text-xs font-semibold text-ink/60 mb-3">Réservations par mois</p>
-        <MiniBarChart data={monthly} valueKey="bookings" color="#12807F" format={(v) => String(v)} />
+        <MiniBarChart data={monthly} valueKey="bookings" color="#C23A00" format={(v) => String(v)} />
       </div>
     </div>
   );

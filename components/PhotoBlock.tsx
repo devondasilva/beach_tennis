@@ -7,8 +7,8 @@ type Tone = "lagoon" | "ink" | "coral";
 
 const TONE_STYLES: Record<Tone, string> = {
   lagoon: "from-lagoon via-lagoondark to-ink",
-  ink: "from-ink via-[#123246] to-lagoondark",
-  coral: "from-coral via-[#c2452c] to-ink",
+  ink: "from-ink via-[#151515] to-lagoondark",
+  coral: "from-coral via-[#C23A00] to-ink",
 };
 
 export default function PhotoBlock({
@@ -36,7 +36,7 @@ export default function PhotoBlock({
       style={clipPath ? { clipPath } : undefined}
     >
       <div
-        className={`absolute inset-0 ${dark ? "court-lines-dark" : "court-lines"} ${
+        className={`absolute inset-0 ${dark ? "court-lines" : "court-lines-dark"} ${
           hoverScale ? "transition-transform duration-700 group-hover:scale-110" : ""
         }`}
       />

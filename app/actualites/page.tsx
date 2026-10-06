@@ -29,7 +29,7 @@ function ArticleCard({ a, large = false }: { a: Article; large?: boolean }) {
               sizes={large ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
             />
           ) : (
-            <div className="absolute inset-0 court-lines flex items-center justify-center text-ink/20">
+            <div className="absolute inset-0 court-lines-dark flex items-center justify-center text-ink/20">
               <Newspaper size={40} />
             </div>
           )}

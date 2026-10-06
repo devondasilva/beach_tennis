@@ -106,7 +106,7 @@ export default async function ClassementPage() {
             )}
 
             {myRank >= 0 && (
-              <Reveal delay={0.1} className="mt-6 relative overflow-hidden bg-ink text-white rounded-[2rem] p-6 md:p-7 flex flex-wrap items-center justify-between gap-4">
+              <Reveal delay={0.1} className="mt-6 relative overflow-hidden bg-ink text-white rounded-card p-6 md:p-7 flex flex-wrap items-center justify-between gap-4">
                 <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/15 blur-3xl" aria-hidden />
                 <div className="relative">
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Ta position</p>
@@ -140,7 +140,7 @@ export default async function ClassementPage() {
                     const me = p.id === session.id;
                     const gap = idx > 0 && rank - rows[idx - 1].rank > 1;
                     return (
-                      <tr key={p.id} style={gap ? { borderTop: "3px dashed rgba(11,46,61,0.12)" } : undefined} className={`transition-colors ${me ? "bg-sun/15" : "hover:bg-sandlight"}`}>
+                      <tr key={p.id} style={gap ? { borderTop: "3px dashed rgba(10,10,8,0.12)" } : undefined} className={`transition-colors ${me ? "bg-sun/15" : "hover:bg-sandlight"}`}>
                         <td className="px-5 py-3.5 font-display font-black text-lg text-lagoon w-14">{rank}</td>
                         <td className="px-5 py-3.5">
                           <span className="flex items-center gap-3">

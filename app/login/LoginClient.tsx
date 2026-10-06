@@ -88,7 +88,7 @@ export default function LoginClient() {
         image={PAGE_IMAGES.compte}
         crumbs={[{ href: "/", label: "Accueil" }]}
         aside={
-          <div className="hidden lg:block bg-white/10 backdrop-blur-xl border border-white/15 p-7 rounded-[2.25rem] space-y-4">
+          <div className="hidden lg:block bg-white/10 backdrop-blur-xl border border-white/15 p-7 rounded-card space-y-4">
             {[
               { icon: QrCode, t: "Votre QR code d'accès personnel" },
               { icon: Trophy, t: "Vos points et votre place au classement" },

@@ -15,7 +15,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2 bg-white border border-ink/[0.08] rounded-2xl p-2 w-fit shadow-sm">
+      <div className="flex flex-wrap gap-2 bg-white border border-line rounded-2xl p-2 w-fit shadow-sm">
         {categories.map((c) => (
           <button
             key={c}
@@ -42,7 +42,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: Math.min(i, 6) * 0.04 }}
-              className="group flex flex-col bg-white border border-ink/[0.08] rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow duration-300"
+              className="group flex flex-col bg-white border border-line rounded-card overflow-hidden shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow duration-300"
             >
               <div className="relative w-full aspect-[4/3] bg-sandlight overflow-hidden">
                 {p.images && p.images.length > 0 ? (
@@ -54,7 +54,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
-                  <div className="absolute inset-0 court-lines flex items-center justify-center text-ink/20">
+                  <div className="absolute inset-0 court-lines-dark flex items-center justify-center text-ink/20">
                     <ShoppingBag size={44} className="group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-500" />
                   </div>
                 )}

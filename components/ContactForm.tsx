@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ArrowButton from "@/components/ui/ArrowButton";
 
 export default function ContactForm() {
   const [name, setName] = useState("");
@@ -38,15 +39,10 @@ export default function ContactForm() {
 
   if (sent) {
     return (
-      <div className="bg-white/5 border-2 border-sun/40 rounded-2xl p-8 text-center">
-        <p className="font-display text-xl text-sun mb-2">Message envoyé !</p>
-        <p className="text-white/70 text-sm mb-6">
-          Merci, on vous répond sous 48h.
-        </p>
-        <button
-          onClick={() => setSent(false)}
-          className="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-sun transition-colors"
-        >
+      <div className="rounded-card border border-orange/30 bg-orangeL p-8 text-center">
+        <p className="h-display text-3xl text-orange">Message envoyé !</p>
+        <p className="mt-2 text-sm text-mutedfg">Merci, on vous répond sous 48h.</p>
+        <button onClick={() => setSent(false)} className="mt-6 text-sm font-semibold text-ink underline-offset-4 hover:text-orange hover:underline">
           Envoyer un autre message
         </button>
       </div>
@@ -54,41 +50,23 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        required
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Nom complet"
-        className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-      />
-      <input
-        required
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        placeholder="Téléphone"
-        className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-      />
-      <textarea
-        required
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Décrivez votre demande…"
-        rows={3}
-        className="w-full bg-white/5 border-2 border-white/10 p-4 rounded-2xl focus:border-sun outline-none transition-all font-bold text-white placeholder:text-white/40"
-      />
-      {error && (
-        <p className="text-sm text-coral bg-coral/10 rounded-2xl px-4 py-3">{error}</p>
-      )}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-4 bg-coral text-white font-bold uppercase tracking-widest rounded-2xl hover:bg-sun hover:text-ink transition-all disabled:opacity-60"
-      >
-        {loading ? "Envoi…" : "Envoyer ma demande"}
-      </button>
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <label className="block">
+        <span className="field-label">Nom complet</span>
+        <input required type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex. Aïcha Dossou" className="field" />
+      </label>
+      <label className="block">
+        <span className="field-label">Téléphone</span>
+        <input required type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+229 01 00 00 00 00" className="field" />
+      </label>
+      <label className="block">
+        <span className="field-label">Votre demande</span>
+        <textarea required value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Réservation de groupe, partenariat plage, cours…" rows={4} className="field" />
+      </label>
+      {error && <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm font-semibold text-danger">{error}</p>}
+      <ArrowButton type="submit" loading={loading} full size="lg">
+        Envoyer ma demande
+      </ArrowButton>
     </form>
   );
 }

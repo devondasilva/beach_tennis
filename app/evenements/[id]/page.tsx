@@ -100,14 +100,14 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                   width={900}
                   height={1200}
                   sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="w-full h-auto rounded-[1.5rem]"
+                  className="w-full h-auto rounded-card"
                 />
               </Reveal>
             )}
           </div>
 
           <Reveal delay={0.1} className="lg:col-span-5 lg:sticky lg:top-[calc(var(--nav-height,4.5rem)+1.5rem)]">
-            <div className="relative overflow-hidden bg-ink text-white rounded-[2rem] p-7 md:p-8 shadow-xl shadow-ink/15">
+            <div className="relative overflow-hidden bg-ink text-white rounded-card p-7 md:p-8 shadow-xl shadow-ink/15">
               <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/15 blur-3xl" aria-hidden />
               <div className="relative">
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Inscription</p>

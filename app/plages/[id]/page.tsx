@@ -108,7 +108,7 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
             <Reveal className={`${ui.card} p-3 md:p-4`}>
               {beach.images.length > 0 ? (
                 <>
-                  <div className="relative h-72 md:h-[26rem] rounded-[1.5rem] overflow-hidden bg-sand">
+                  <div className="relative h-72 md:h-[26rem] rounded-card overflow-hidden bg-sand">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={beach.images[activeImage]}
@@ -140,7 +140,7 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
                   )}
                 </>
               ) : (
-                <IllustrationBlock Illustration={BeachDefault} className="h-72 md:h-[26rem] rounded-[1.5rem]" />
+                <IllustrationBlock Illustration={BeachDefault} className="h-72 md:h-[26rem] rounded-card" />
               )}
             </Reveal>
 
@@ -214,7 +214,7 @@ export default function BeachDetailPage({ params }: { params: { id: string } }) 
               </div>
             </Reveal>
 
-            <Reveal delay={0.15} className="relative overflow-hidden bg-ink text-white rounded-[2rem] p-6 md:p-7">
+            <Reveal delay={0.15} className="relative overflow-hidden bg-ink text-white rounded-card p-6 md:p-7">
               <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/15 blur-3xl" aria-hidden />
               <div className="relative">
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Votre expérience</p>

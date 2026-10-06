@@ -1,37 +1,35 @@
 /**
- * Classes partagées du design Beach Tennis Bénin — reprises de la page
- * d'accueil (boutons arrondis en capitales, cartes blanches très arrondies,
- * champs épais) pour que toutes les pages parlent la même langue visuelle.
+ * Classes partagées du design Beach Tennis Bénin × MADES — reprises de la
+ * page d'accueil (boutons « pilule », cartes blanches arrondies, champs épais) pour que toutes les pages parlent la même langue visuelle.
  */
 export const ui = {
   btnPrimary:
-    "inline-flex items-center justify-center gap-2 px-7 py-4 bg-coral text-white font-bold uppercase tracking-widest text-xs sm:text-sm rounded-2xl shadow-lg shadow-coral/20 hover:bg-sun hover:text-ink transition-all disabled:opacity-60 disabled:pointer-events-none",
+    "inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-orange text-white font-semibold text-sm rounded-full shadow-glow hover:bg-ink transition-colors duration-300 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
   btnDark:
-    "inline-flex items-center justify-center gap-2 px-7 py-4 bg-ink text-white font-bold uppercase tracking-widest text-xs sm:text-sm rounded-2xl hover:bg-coral transition-all disabled:opacity-60 disabled:pointer-events-none",
+    "inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-ink text-white font-semibold text-sm rounded-full hover:bg-orange transition-colors duration-300 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
   btnSun:
-    "inline-flex items-center justify-center gap-2 px-7 py-4 bg-sun text-ink font-bold uppercase tracking-widest text-xs sm:text-sm rounded-2xl hover:bg-white transition-all",
+    "inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-ink font-semibold text-sm rounded-full hover:bg-orange hover:text-white transition-colors duration-300",
   btnGhost:
-    "inline-flex items-center justify-center gap-2 px-7 py-4 border-2 border-ink/10 bg-white text-ink font-bold uppercase tracking-widest text-xs sm:text-sm rounded-2xl hover:border-coral hover:text-coral transition-all",
+    "inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-ink/15 bg-transparent text-ink font-semibold text-sm rounded-full hover:border-orange hover:bg-orange hover:text-white transition-colors duration-300",
   btnGhostDark:
-    "inline-flex items-center justify-center gap-2 px-7 py-4 bg-white/10 border border-white/20 text-white font-bold uppercase tracking-widest text-xs sm:text-sm rounded-2xl hover:bg-white/20 backdrop-blur-sm transition-all",
-  card: "bg-white border border-ink/[0.08] rounded-[2rem] shadow-sm",
+    "inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/25 text-white font-semibold text-sm rounded-full hover:border-white hover:bg-white/15 transition-colors duration-300",
+  card: "card",
   cardHover:
-    "bg-white border border-ink/[0.08] rounded-[2rem] shadow-sm hover:shadow-xl hover:shadow-coral/10 hover:-translate-y-1 transition-all duration-300",
-  label: "block text-[11px] font-bold uppercase tracking-widest text-ink/60 mb-2",
-  input:
-    "w-full rounded-2xl border-2 border-ink/10 bg-white px-4 py-3.5 font-semibold text-ink placeholder:text-ink/35 placeholder:font-medium focus:border-coral focus:outline-none transition-colors",
-  eyebrow: "text-[11px] font-bold uppercase tracking-[0.25em] text-coral",
-  sectionTitle: "font-display text-3xl md:text-4xl font-black tracking-tight text-ink",
-  error: "text-sm font-semibold text-coral bg-coral/10 rounded-2xl px-4 py-3",
+    "card transition-all duration-500 hover:-translate-y-1 hover:border-orange hover:shadow-lift",
+  label: "field-label",
+  input: "field",
+  eyebrow: "tag-label",
+  sectionTitle: "h-display text-4xl md:text-5xl text-ink",
+  error: "text-sm font-semibold text-danger bg-danger/10 rounded-xl px-4 py-3",
 } as const;
 
 /** Classe d'une carte-option (radio stylé) selon son état. */
 export function optionCls(selected: boolean, tone: "coral" | "lagoon" = "coral") {
   const on =
     tone === "coral"
-      ? "border-coral bg-coral/[0.06] shadow-lg shadow-coral/10"
-      : "border-lagoon bg-lagoon/[0.06] shadow-lg shadow-lagoon/10";
+      ? "border-orange bg-orangeL/60 shadow-glow"
+      : "border-orangeD bg-orangeL/60 shadow-glow";
   return `relative cursor-pointer rounded-2xl border-2 p-4 transition-all duration-200 ${
-    selected ? on : "border-ink/10 bg-white hover:border-ink/25"
+    selected ? on : "border-line bg-white hover:border-ink/25"
   }`;
 }

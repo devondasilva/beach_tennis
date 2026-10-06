@@ -223,8 +223,8 @@ export default function ProfilClient() {
       <PageBody>
         <div className="grid lg:grid-cols-12 gap-6 items-start">
           <Reveal className="lg:col-span-4 lg:sticky lg:top-[calc(var(--nav-height,4.5rem)+1.5rem)]">
-            <div className="relative overflow-hidden rounded-[2rem] bg-ink text-sandlight p-7 text-center shadow-xl shadow-ink/20">
-              <div className="absolute inset-0 court-lines-dark opacity-40" aria-hidden />
+            <div className="relative overflow-hidden rounded-card bg-ink text-sandlight p-7 text-center shadow-xl shadow-ink/20">
+              <div className="absolute inset-0 court-lines opacity-40" aria-hidden />
               <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/20 blur-3xl" aria-hidden />
               <div className="relative">
                 <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Carte membre</p>

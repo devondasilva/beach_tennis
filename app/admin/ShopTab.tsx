@@ -193,7 +193,7 @@ export default function ShopTab({
           <button
             type="submit"
             disabled={creating}
-            className="sm:col-span-2 rounded-xl bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+            className="sm:col-span-2 rounded-full bg-coral text-white font-semibold py-2 text-sm hover:bg-ink transition-colors disabled:opacity-60"
           >
             {creating ? "Création…" : "Ajouter le produit"}
           </button>

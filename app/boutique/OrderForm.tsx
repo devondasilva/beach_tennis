@@ -63,7 +63,7 @@ export default function OrderForm({ product }: { product: Product }) {
       <button
         onClick={() => setOpen(true)}
         disabled={product.stock === 0}
-        className="mt-5 w-full rounded-2xl bg-ink text-white font-bold uppercase tracking-widest py-3.5 text-xs hover:bg-coral transition-colors disabled:opacity-40 disabled:hover:bg-ink"
+        className="mt-5 w-full rounded-full bg-ink text-white font-semibold py-3.5 text-xs hover:bg-coral transition-colors disabled:opacity-40 disabled:hover:bg-ink"
       >
         {product.stock === 0 ? "Rupture de stock" : "Commander"}
       </button>
@@ -102,7 +102,7 @@ export default function OrderForm({ product }: { product: Product }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 rounded-xl bg-coral text-white font-bold uppercase tracking-wider py-3 text-xs hover:bg-ink transition-colors disabled:opacity-60"
+          className="flex-1 rounded-full bg-coral text-white font-semibold py-3 text-xs hover:bg-ink transition-colors disabled:opacity-60"
         >
           {loading ? "…" : `Payer ${formatFCFA(product.price * qty)}`}
         </button>

@@ -59,7 +59,7 @@ export default function EventRegisterForm({ eventId }: { eventId: string }) {
         </p>
         <Link
           href={`/profil?playerId=${success.playerId}`}
-          className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-sun text-ink font-bold uppercase tracking-widest text-xs rounded-xl hover:bg-white transition-colors"
+          className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-sun text-ink font-semibold text-xs rounded-full hover:bg-white transition-colors"
         >
           Voir mon profil →
         </Link>
@@ -92,7 +92,7 @@ export default function EventRegisterForm({ eventId }: { eventId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 bg-coral text-white font-bold uppercase tracking-widest text-sm rounded-2xl hover:bg-sun hover:text-ink transition-all disabled:opacity-60"
+        className="w-full py-4 bg-coral text-white font-semibold text-sm rounded-full hover:bg-ink transition-all disabled:opacity-60"
       >
         {loading ? "Inscription en cours…" : "S'inscrire au tournoi"}
       </button>

@@ -137,7 +137,7 @@ export default function CoursPage() {
               <div className="lg:col-span-8 space-y-6">
                 <FormSection>
                   <StepTitle n={1} title="La formule" />
-                  <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {LESSON_TARIFFS.map((t) => (
                       <label key={t.id} className={optionCls(formulaId === t.id)}>
                         <input
@@ -217,7 +217,7 @@ export default function CoursPage() {
                             type="button"
                             key={s}
                             onClick={() => setTime(s)}
-                            className={`rounded-xl border-2 py-2.5 text-sm font-bold transition-all ${
+                            className={`rounded-full border-2 py-2.5 text-sm font-bold transition-all ${
                               time === s ? "border-ink bg-ink text-white" : "border-ink/10 bg-white text-ink/70 hover:border-ink/30"
                             }`}
                           >
@@ -277,7 +277,7 @@ export default function CoursPage() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
                 className="lg:col-span-4 lg:sticky lg:top-[calc(var(--nav-height,4.5rem)+1.5rem)] space-y-6"
               >
-                <div className="relative overflow-hidden bg-ink text-white rounded-[2rem] p-7 shadow-xl shadow-ink/15">
+                <div className="relative overflow-hidden bg-ink text-white rounded-card p-7 shadow-xl shadow-ink/15">
                   <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-sun/15 blur-3xl" aria-hidden />
                   <p className="relative text-[11px] font-bold uppercase tracking-[0.25em] text-sun">Récapitulatif</p>
                   <div className="relative mt-4">

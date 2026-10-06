@@ -48,32 +48,29 @@ npm run start
 Toutes les pages consomment des routes API sous `app/api/*` (réservations,
 cours, événements, produits, commandes, génération de QR code, statistiques).
 
-## Identité visuelle
+## Identité visuelle (alignée sur MADES Formation Continue)
 
-Le site garde sa propre identité Beach Tennis Bénin :
+Le design reprend celui de la plateforme **MADES Formation Continue** :
 
 | Rôle | Valeur |
 |---|---|
-| Encre lagon (texte, fonds sombres) | `#0B2E3D` (`ink`) |
-| Sable clair (fond de page) / sable chaud | `#FBF6EC` (`sandlight`) / `#F2E4C9` (`sand`) |
-| Corail (accent, boutons) | `#E8593B` (`coral`) |
-| Lagon (liens) | `#12807F` (`lagoon`) |
-| Soleil | `#F4A63B` (`sun`) |
-| Palmier | `#2F6E4F` (`palm`) |
-| Titres | Fraunces (900) |
-| Texte | Inter |
+| Orange MADES (accent, boutons) | `#FF4D00` (`orange` / `coral`) |
+| Encre (texte, fonds sombres) | `#0A0A08` (`ink`) |
+| Fond papier / sable / lignes | `#F8F8F6` (`bg`) / `#EFEFEB` (`sand`) / `#E3E3DE` (`line`) |
+| Titres | Barlow Condensed 900 italique, capitales (`h-display`) |
+| Texte / détails | Hanken Grotesk / DM Mono |
+| Cartes | coins arrondis 1.25rem (`rounded-card`), tuiles coupées en biais (`slant-l`, `slant-r`) |
 
-Les polices sont auto-hébergées (`@fontsource/fraunces`, `@fontsource/inter`).
+Composants repris de la Formation Continue : bouton signature `ArrowButton`
+(remplissage depuis le curseur, lettres qui roulent, flèche qui traverse),
+`RotatingBadge`, `SplitTitle`, `Counter`, `Marquee`, `BackToTop`, étiquettes
+`tag-label` à point orange, pastilles `arrow-chip`, champs `field`.
 
-Toutes les pages reprennent le langage de la page d'accueil : bandeau d'en-tête
-bleu lagon avec photo voilée et badge soleil (`components/ui/PageHero.tsx`),
-contenu en cartes blanches très arrondies qui remontent sur le bandeau, boutons
-en capitales, récapitulatif sombre collant sur les formulaires de réservation.
-Les classes communes sont dans `lib/ui.ts`.
-
-Animations (framer-motion) : parallaxe du hero, compteurs animés, apparitions au
-défilement, transitions de page, filtres animés de la boutique, podium du
-classement, écrans de confirmation. Tout respecte `prefers-reduced-motion`.
+Accueil : tuiles en biais (jeu libre, coaching, tournois, boutique), badge
+tournant, bandeau orange incliné, « trois étapes », liste des plages, formules
+sur fond sombre, ambiance, contact. Back-office : barre latérale sombre
+repliable avec élément actif orange, bandeau d'accueil, KPI, actions rapides
+et grille des modules, en plus des statistiques détaillées.
 
 ## Tableau de bord et statistiques
 
@@ -110,22 +107,26 @@ Le site distingue deux profils, chacun avec son propre espace via `/login` :
 - **Visiteur / joueur** — identifié par son numéro de téléphone (comme avant), avec création automatique du profil à la première connexion. Une fois connecté, `/profil` charge directement son espace sans ressaisir le numéro.
 - **Administrateur** — identifiant + mot de passe, accès au tableau de bord complet sur `/admin`.
 
-Un compte administrateur est créé par défaut :
-
-```
-Identifiant : admin
-Mot de passe : BeachTennis2026
-```
-
-**Changez ce mot de passe avant toute mise en ligne réelle** avec :
+La première utilisation ne contient aucun compte administrateur. Créez-en un
+localement avec :
 
 ```bash
 npm run create-admin -- <identifiant> <nouveau-mot-de-passe> "Nom affiché"
 ```
 
-La commande crée un nouvel administrateur, ou met à jour le mot de passe si l'identifiant existe déjà. Il n'y a pas d'interface web pour créer des comptes admin (choix volontaire, pour éviter qu'un accès mal protégé ne permette d'en créer un).
+La commande crée un nouvel administrateur, ou met à jour le mot de passe si
+l'identifiant existe déjà. Les comptes sont enregistrés localement dans
+`data/admins.json`, un fichier exclu de Git. Il n'y a pas d'interface web pour
+créer des comptes admin (choix volontaire, pour éviter qu'un accès mal protégé
+ne permette d'en créer un).
 
-Techniquement : les sessions sont des cookies signés (HMAC, Web Crypto — compatible avec le middleware Next.js qui protège `/admin`), et les mots de passe sont hachés avec sel (scrypt) dans `data/admins.json`. Définissez la variable d'environnement `AUTH_SECRET` (chaîne aléatoire longue) avant un déploiement réel — sans elle, une valeur par défaut de développement est utilisée, indiquée dans `lib/auth.ts`.
+Les sessions sont des cookies signés (HMAC, Web Crypto — compatible avec le
+middleware Next.js qui protège `/admin`) et les mots de passe sont hachés avec
+sel (scrypt). Définissez `AUTH_SECRET` avec une valeur aléatoire d'au moins
+32 caractères avant de démarrer en production ; l'application refuse de signer
+les sessions en production si cette variable est absente ou trop courte. En
+développement, une valeur locale est utilisée automatiquement. Un modèle est
+fourni dans `.env.example`.
 
 ## Tableau de bord admin (`/admin`)
 
@@ -187,9 +188,9 @@ changement de prix sur l'ensemble du site.
 - **Notifications SMS/WhatsApp** : brancher un fournisseur (Twilio, etc.)
   lors de la création d'une réservation dans `lib/db.ts`.
 - **Renforcer la sécurité avant mise en ligne réelle** : changer le mot de
-  passe admin par défaut (`npm run create-admin`), définir la variable
-  d'environnement `AUTH_SECRET`, et passer les cookies de session en
-  `secure` (déjà automatique dès que `NODE_ENV=production`).
+  passe admin (créé avec `npm run create-admin`), définir `AUTH_SECRET` et
+  passer les cookies de session en `secure` (déjà automatique dès que
+  `NODE_ENV=production`).
 - **Comptes joueurs plus robustes** : l'espace joueur n'utilise qu'un numéro
   de téléphone comme identifiant, sans mot de passe — cohérent avec l'usage
   prévu (peu de friction sur la plage), mais à faire évoluer avec un code

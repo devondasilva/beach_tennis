@@ -59,7 +59,7 @@ export default function FeaturedArticles() {
               href={href}
               target={external ? "_blank" : undefined}
               rel={external ? "noopener noreferrer" : undefined}
-              className="bg-white rounded-[2rem] border border-ink/[0.08] overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-coral/10 hover:-translate-y-1 transition-all duration-300 group"
+              className="bg-white rounded-card border border-line overflow-hidden flex flex-col shadow-sm hover:shadow-xl hover:shadow-coral/10 hover:-translate-y-1 transition-all duration-300 group"
             >
               <div className="relative w-full aspect-[16/10] bg-sandlight overflow-hidden">
                 {a.imageUrl ? (

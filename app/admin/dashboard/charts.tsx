@@ -101,7 +101,7 @@ export function RevenueChart({
           width={44}
         />
         <Tooltip
-          cursor={{ fill: "rgba(11,46,61,0.04)" }}
+          cursor={{ fill: "rgba(10,10,8,0.04)" }}
           content={(p: TooltipProps<number, string>) => {
             if (!p.active || !p.payload?.length) return null;
             const row = p.payload[0].payload as Analytics["revenueSeries"][number];
@@ -124,7 +124,7 @@ export function RevenueChart({
             fill={SOURCE_COLORS[k]}
             stroke="#fff"
             strokeWidth={1}
-            radius={i === visible.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+            radius={0}
             animationDuration={900}
             maxBarSize={36}
           />
@@ -160,7 +160,7 @@ export function SourceDonut({ data }: { data: Analytics["revenueBySource"] }) {
             innerRadius="68%"
             outerRadius="94%"
             paddingAngle={data.filter((d) => d.value > 0).length > 1 ? 2 : 0}
-            cornerRadius={4}
+            cornerRadius={0}
             stroke="#fff"
             strokeWidth={2}
             startAngle={90}
@@ -192,7 +192,7 @@ export function SourceDonut({ data }: { data: Analytics["revenueBySource"] }) {
 
 export function HBars({
   rows,
-  color = "#E8593B",
+  color = "#FF4D00",
 }: {
   rows: { label: string; value: number; display: string; sub?: string }[];
   color?: string;
@@ -231,7 +231,7 @@ export function HBars({
 export function Heatmap({ data }: { data: Analytics["heatmap"] }) {
   const [hover, setHover] = useState<{ d: number; h: number } | null>(null);
   const shade = (v: number) => {
-    if (v === 0 || data.max === 0) return "rgba(11,46,61,0.035)";
+    if (v === 0 || data.max === 0) return "rgba(10,10,8,0.035)";
     const idx = Math.min(ORANGE_RAMP.length - 1, Math.floor((v / data.max) * (ORANGE_RAMP.length - 1) + 0.0001));
     return ORANGE_RAMP[Math.max(1, idx)];
   };
@@ -303,21 +303,21 @@ export function GrowthChart({ data }: { data: Analytics["playersGrowth"] }) {
       <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         <defs>
           <linearGradient id="growth" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#E8593B" stopOpacity={0.28} />
-            <stop offset="100%" stopColor="#E8593B" stopOpacity={0} />
+            <stop offset="0%" stopColor="#FF4D00" stopOpacity={0.28} />
+            <stop offset="100%" stopColor="#FF4D00" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke={CHART.grid} />
         <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: CHART.axis, fontSize: 11 }} interval="preserveStartEnd" minTickGap={28} dy={6} />
         <YAxis tickLine={false} axisLine={false} tick={{ fill: CHART.axis, fontSize: 11 }} width={36} allowDecimals={false} />
         <Tooltip
-          cursor={{ stroke: "#0B2E3D", strokeDasharray: "3 3" }}
+          cursor={{ stroke: "#0A0A08", strokeDasharray: "3 3" }}
           content={(p: TooltipProps<number, string>) => {
             if (!p.active || !p.payload?.length) return null;
             const row = p.payload[0].payload as Analytics["playersGrowth"][number];
             return (
               <TooltipShell title={row.label}>
-                <Row color="#E8593B" label="Joueurs inscrits" value={String(row.cumulative)} />
+                <Row color="#FF4D00" label="Joueurs inscrits" value={String(row.cumulative)} />
                 <Row label="Nouveaux sur la période" value={`+${row.newPlayers}`} />
               </TooltipShell>
             );
@@ -326,11 +326,11 @@ export function GrowthChart({ data }: { data: Analytics["playersGrowth"] }) {
         <Area
           type="monotone"
           dataKey="cumulative"
-          stroke="#E8593B"
+          stroke="#FF4D00"
           strokeWidth={2}
           fill="url(#growth)"
           animationDuration={1200}
-          activeDot={{ r: 5, stroke: "#fff", strokeWidth: 2, fill: "#E8593B" }}
+          activeDot={{ r: 5, stroke: "#fff", strokeWidth: 2, fill: "#FF4D00" }}
         />
       </AreaChart>
     </ResponsiveContainer>

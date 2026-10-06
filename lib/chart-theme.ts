@@ -1,11 +1,11 @@
 /**
- * Palette des graphiques — validée (bande de luminosité, chroma, séparation
- * daltonisme ΔE ≥ 8, plancher vision normale) avec le validateur dataviz.
- * Couleurs dérivées de la palette du projet (corail, lagon, soleil, océan) ; le corail occupe la série 1 ; la couleur suit l'entité, jamais le rang.
+ * Palette des graphiques — identité MADES, validée (bande de luminosité,
+ * chroma, séparation daltonisme ΔE ≥ 8, plancher vision normale).
+ * L'orange MADES occupe la série 1 ; la couleur suit l'entité, jamais le rang.
  */
 import type { RevenueSource } from "./analytics";
 
-export const SERIES = ["#E8593B", "#00908C", "#E39B1B", "#3A5BA0"] as const;
+export const SERIES = ["#FF4D00", "#2A78D6", "#1BAF7A", "#4A3AA7"] as const;
 
 export const SOURCE_COLORS: Record<RevenueSource, string> = {
   terrains: SERIES[0],
@@ -16,13 +16,13 @@ export const SOURCE_COLORS: Record<RevenueSource, string> = {
 
 export const SOURCE_ORDER: RevenueSource[] = ["terrains", "cours", "boutique", "evenements"];
 
-/** Rampe séquentielle corail (clair → foncé) pour les intensités (heatmap). */
-export const ORANGE_RAMP = ["#FDEDE8", "#F8CDBF", "#F2A68F", "#ED7F60", "#E8593B", "#12807F"];
+/** Rampe séquentielle orange (clair → foncé) pour les intensités (heatmap). */
+export const ORANGE_RAMP = ["#FFF1EA", "#FFD3BD", "#FFAE85", "#FF844D", "#FF4D00", "#C23A00"];
 
 export const CHART = {
-  grid: "rgba(11,46,61,0.07)",
-  axis: "#4E6670",
-  text: "#0B2E3D",
+  grid: "rgba(10,10,8,0.07)",
+  axis: "#666660",
+  text: "#0A0A08",
   surface: "#FFFFFF",
 };
 

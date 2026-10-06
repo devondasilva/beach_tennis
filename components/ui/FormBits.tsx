@@ -40,7 +40,7 @@ export function FormSection({ children, delay = 0 }: { children: ReactNode; dela
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay }}
-      className="bg-white border border-ink/[0.08] rounded-[2rem] shadow-sm p-6 md:p-8"
+      className="bg-white border border-line rounded-card shadow-sm p-6 md:p-8"
     >
       {children}
     </motion.section>
