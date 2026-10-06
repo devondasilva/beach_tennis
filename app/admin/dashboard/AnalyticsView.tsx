@@ -9,8 +9,8 @@ import { GrowthChart, HBars, Heatmap, StackedShare } from "./charts";
 
 const int = (v: number) => Math.round(v).toLocaleString("fr-FR");
 const pct = (v: number) => `${(Math.round(v * 1000) / 10).toLocaleString("fr-FR")} %`;
-const LEVEL_COLORS = ["#F4A63B", "#E8593B", "#12807F"];
-const NEUTRALS = ["#0B2E3D", "#4E6670", "#C9D3D6"];
+const LEVEL_COLORS = ["#FFAE85", "#FF4D00", "#C23A00"];
+const NEUTRALS = ["#0A0A08", "#666660", "#BDBDB8"];
 
 export default function AnalyticsView({ a }: { a: Analytics }) {
   const k = a.kpis;
@@ -34,7 +34,7 @@ export default function AnalyticsView({ a }: { a: Analytics }) {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-          className="rounded-2xl p-5 bg-white border border-ink/[0.07]"
+          className="card p-5"
         >
           <div className="flex items-start justify-between">
             <p className="label-mono !text-[0.62rem] text-muted">Créneau le plus demandé</p>
@@ -49,7 +49,7 @@ export default function AnalyticsView({ a }: { a: Analytics }) {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE, delay: 0.15 }}
-          className="rounded-2xl p-5 bg-white border border-ink/[0.07]"
+          className="card p-5"
         >
           <div className="flex items-start justify-between">
             <p className="label-mono !text-[0.62rem] text-muted">Satisfaction (avis)</p>
@@ -191,7 +191,7 @@ export default function AnalyticsView({ a }: { a: Analytics }) {
         <Card title="Activité des coachs" subtitle="Cours donnés sur la période" delay={0.25}>
           {a.coaches.length ? (
             <HBars
-              color="#00908C"
+              color="#2A78D6"
               rows={a.coaches.map((c) => ({ label: c.name, value: c.lessons, display: `${c.lessons} cours`, sub: formatFCFA(c.revenue) }))}
             />
           ) : (
@@ -201,7 +201,7 @@ export default function AnalyticsView({ a }: { a: Analytics }) {
         <Card title="Ventes boutique" subtitle="Produits les plus vendus · stock restant" delay={0.3}>
           {a.topProducts.some((p) => p.qty > 0) ? (
             <HBars
-              color="#E39B1B"
+              color="#1BAF7A"
               rows={a.topProducts
                 .filter((p) => p.qty > 0)
                 .map((p) => ({ label: p.name, value: p.revenue, display: formatFCFA(p.revenue), sub: `${p.qty} vendus · stock ${p.stock}` }))}

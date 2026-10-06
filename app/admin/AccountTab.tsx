@@ -112,7 +112,7 @@ export default function AccountTab({ adminName }: { adminName?: string }) {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-xl bg-coral text-white font-semibold py-2.5 text-sm hover:bg-ink transition-colors disabled:opacity-60"
+          className="w-full rounded-full bg-coral text-white font-semibold py-2.5 text-sm hover:bg-ink transition-colors disabled:opacity-60"
         >
           {saving ? "Enregistrement…" : "Mettre à jour le mot de passe"}
         </button>

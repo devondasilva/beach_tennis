@@ -21,9 +21,9 @@ export default function SuccessPanel({
       initial={{ opacity: 0, y: 24, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="relative overflow-hidden bg-ink text-white rounded-[2.5rem] p-10 md:p-12 text-center shadow-2xl shadow-ink/20"
+      className="relative overflow-hidden bg-ink text-white rounded-card p-10 md:p-12 text-center shadow-2xl shadow-ink/20"
     >
-      <div className="absolute inset-0 court-lines-dark opacity-40" aria-hidden />
+      <div className="absolute inset-0 court-lines opacity-40" aria-hidden />
       <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-sun/20 blur-3xl" aria-hidden />
       <div className="relative">
         <motion.div

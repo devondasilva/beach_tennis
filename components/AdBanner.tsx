@@ -45,7 +45,7 @@ export default function AdBanner({
       href={ad.targetUrl}
       target="_blank"
       rel="noopener noreferrer sponsored"
-      className={`block rounded-[2rem] overflow-hidden border border-ink/[0.08] shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow group ${className}`}
+      className={`block rounded-card overflow-hidden border border-line shadow-sm hover:shadow-xl hover:shadow-coral/10 transition-shadow group ${className}`}
     >
       <div className="relative w-full aspect-[16/5] bg-sandlight overflow-hidden">
         <Image

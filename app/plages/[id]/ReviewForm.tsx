@@ -95,7 +95,7 @@ export default function ReviewForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 bg-coral text-white font-bold uppercase tracking-widest text-xs rounded-2xl hover:bg-sun hover:text-ink transition-all disabled:opacity-60"
+        className="w-full py-4 bg-coral text-white font-semibold text-xs rounded-full hover:bg-ink transition-all disabled:opacity-60"
       >
         {loading ? "Envoi…" : "Publier mon avis"}
       </button>

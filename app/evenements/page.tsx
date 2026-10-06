@@ -47,7 +47,7 @@ function EventCard({ e, past = false }: { e: EventItem; past?: boolean }) {
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         ) : (
-          <div className="absolute inset-0 court-lines-dark flex items-center justify-center">
+          <div className="absolute inset-0 court-lines flex items-center justify-center">
             <Trophy size={56} className="text-sun/40 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-700" />
           </div>
         )}
@@ -110,9 +110,10 @@ export default function EvenementsPage() {
         subtitle="Inscription en ligne, catégories débutants et confirmés, ambiance de plage et des dotations pour les gagnants. Le classement vit toute l'année."
         image={PAGE_IMAGES.evenements}
         crumbs={[{ href: "/", label: "Accueil" }]}
+        asideOnMobile
         aside={
           next ? (
-            <div className="bg-white/10 backdrop-blur-xl border border-white/15 p-7 rounded-[2.25rem] shadow-2xl">
+            <div className="bg-white/10 backdrop-blur-xl border border-white/15 p-7 rounded-card shadow-2xl">
               <div className="flex items-center justify-between border-b border-white/10 pb-5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-sun/20 flex items-center justify-center text-sun">

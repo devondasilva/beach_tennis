@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export default function EmptyState({ icon, title, children }: { icon: ReactNode; title: string; children?: ReactNode }) {
   return (
-    <div className="bg-white border border-ink/[0.08] rounded-[2rem] p-12 text-center">
+    <div className="bg-white border border-line rounded-card p-12 text-center">
       <div className="mx-auto w-14 h-14 rounded-2xl bg-sandlight text-coral flex items-center justify-center">
         {icon}
       </div>

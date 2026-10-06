@@ -1,7 +1,11 @@
 node_modules
 .next
 out
+.env
+.env.*
+!.env.example
 .env*.local
 npm-debug.log*
 .DS_Store
 data/_backups
+data/admins.json

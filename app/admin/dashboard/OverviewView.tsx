@@ -21,6 +21,7 @@ import { SOURCE_COLORS, SOURCE_ORDER } from "@/lib/chart-theme";
 import { formatFCFA } from "@/lib/pricing";
 import { Card, DeltaBadge, Empty, KpiCard, ProgressBar, EASE } from "./ui";
 import { RevenueChart, SourceDonut } from "./charts";
+import { SlideArrow } from "@/components/ui/ArrowButton";
 
 const fcfa = (v: number) => formatFCFA(Math.round(v));
 const int = (v: number) => Math.round(v).toLocaleString("fr-FR");
@@ -28,7 +29,7 @@ const int = (v: number) => Math.round(v).toLocaleString("fr-FR");
 const ACTIVITY_ICON = {
   booking: { icon: CalendarDays, cls: "bg-series-1/10 text-coral" },
   lesson: { icon: GraduationCap, cls: "bg-series-2/10 text-series-2" },
-  order: { icon: ShoppingBag, cls: "bg-series-3/10 text-[#9A6200]" },
+  order: { icon: ShoppingBag, cls: "bg-series-3/10 text-[#13805a]" },
   event: { icon: PartyPopper, cls: "bg-series-4/10 text-series-4" },
   player: { icon: UserPlus, cls: "bg-ink/5 text-ink" },
 } as const;
@@ -42,7 +43,26 @@ function timeAgo(iso: string) {
   return d === 1 ? "hier" : `il y a ${d} j`;
 }
 
-export default function OverviewView({ a, onNavigate }: { a: Analytics; onNavigate: (tab: string) => void }) {
+interface Counts {
+  bookings: number;
+  lessons: number;
+  events: number;
+  products: number;
+  orders: number;
+  players: number;
+}
+
+export default function OverviewView({
+  a,
+  adminName,
+  counts,
+  onNavigate,
+}: {
+  a: Analytics;
+  adminName?: string | null;
+  counts?: Counts;
+  onNavigate: (tab: string) => void;
+}) {
   const [hidden, setHidden] = useState<Set<RevenueSource>>(new Set());
   const k = a.kpis;
   const totalBySource = a.revenueBySource.reduce((s, r) => s + r.value, 0);
@@ -63,26 +83,51 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
 
   return (
     <div className="space-y-5">
-      {/* Alertes */}
-      {alerts.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="flex flex-wrap gap-2"
-        >
-          {alerts.map((al) => (
-            <button
-              key={al.label}
-              onClick={() => onNavigate(al.tab)}
-              className="inline-flex items-center gap-2 rounded-full border border-coral/25 bg-coral/[0.06] px-3.5 py-1.5 text-xs font-semibold text-ink hover:bg-coral hover:text-white hover:border-coral transition-colors"
-            >
-              <al.icon size={14} className="opacity-80" />
-              <span className="tabular">{al.n}</span> {al.label}
-            </button>
-          ))}
-        </motion.div>
-      )}
+      {/* ===== Bandeau d'accueil (façon Formation Continue) ===== */}
+      <motion.section
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+        className="court-lines relative overflow-hidden rounded-card bg-ink p-6 text-white sm:p-8"
+      >
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-orange/30 blur-3xl" />
+        <div className="relative flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-orange">Back-office · Beach Tennis Bénin</p>
+            <h1 className="h-display mt-3 text-5xl sm:text-6xl" suppressHydrationWarning>
+              {new Date().getHours() < 18 ? "Bonjour" : "Bonsoir"}
+              {adminName ? (
+                <>
+                  , <span className="text-orange">{adminName.split(" ")[0]}.</span>
+                </>
+              ) : (
+                "."
+              )}
+            </h1>
+            <p className="mt-2 max-w-md text-sm text-white/60">
+              Voici l&rsquo;activité des plages sur les {a.range.label.toLowerCase()}. Chaque carte mène directement à l&rsquo;action.
+            </p>
+          </div>
+          {alerts.length > 0 && (
+            <div className="flex flex-col items-start gap-2">
+              {alerts.map((al, i) => (
+                <button
+                  key={al.label}
+                  onClick={() => onNavigate(al.tab)}
+                  className="btn-motion group inline-flex items-center gap-3 rounded-full bg-orange py-1.5 pl-1.5 pr-4 text-sm font-semibold shadow-glow"
+                >
+                  <span className="btn-fill bg-white/15" aria-hidden />
+                  <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-orange ${i === 0 ? "animate-pulseRing" : ""}`}>
+                    <al.icon size={15} />
+                  </span>
+                  <span className="tabular">{al.n}</span> {al.label}
+                  <SlideArrow size={14} />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.section>
 
       {/* KPI principaux */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -90,6 +135,37 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
         <KpiCard label="Réservations terrain" kpi={k.bookings} icon={CalendarDays} format={int} delay={0.05} />
         <KpiCard label="Nouveaux joueurs" kpi={k.newPlayers} icon={UserPlus} format={int} delay={0.1} />
         <KpiCard label="Panier moyen" kpi={k.avgTicket} icon={Receipt} format={fcfa} delay={0.15} />
+      </div>
+
+      {/* ===== Actions rapides ===== */}
+      <div>
+        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mutedfg">Actions rapides</p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { icon: CalendarDays, label: "Réservations", text: `${int(k.bookings.value)} sur la période`, tab: "reservations" },
+            { icon: PartyPopper, label: "Programmer un tournoi", text: `${a.alerts.upcomingEvents} à venir`, tab: "evenements" },
+            { icon: Package, label: "Livrer les commandes", text: `${a.alerts.pendingOrders} en attente`, tab: "commandes" },
+            { icon: Mail, label: "Répondre aux messages", text: `${a.alerts.unreadMessages} non lu${a.alerts.unreadMessages > 1 ? "s" : ""}`, tab: "messages" },
+          ].map((q, i) => (
+            <motion.button
+              key={q.label}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + i * 0.05, duration: 0.5, ease: EASE }}
+              onClick={() => onNavigate(q.tab)}
+              className="card group flex items-center gap-3 p-3.5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-orange"
+            >
+              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ink text-white transition-colors duration-300 group-hover:bg-orange">
+                <q.icon size={19} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">{q.label}</span>
+                <span className="block truncate text-xs text-mutedfg">{q.text}</span>
+              </span>
+              <SlideArrow size={15} />
+            </motion.button>
+          ))}
+        </div>
       </div>
 
       {/* Recettes + répartition */}
@@ -113,7 +189,7 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
                     off ? "border-ink/10 text-muted opacity-60" : "border-ink/10 bg-ink/[0.02] text-ink"
                   }`}
                 >
-                  <span className="w-2.5 h-2.5 rounded-[3px]" style={{ backgroundColor: off ? "#C9D3D6" : SOURCE_COLORS[s] }} />
+                  <span className="w-2.5 h-2.5 rounded-[3px]" style={{ backgroundColor: off ? "#BDBDB8" : SOURCE_COLORS[s] }} />
                   <span className="font-semibold">{row.label}</span>
                   <span className="tabular text-muted">{formatFCFA(row.value)}</span>
                 </button>
@@ -135,7 +211,7 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
           </div>
           <ul className="mt-5 space-y-2.5">
             {a.revenueBySource.map((r) => (
-              <li key={r.source} className="flex items-center justify-between gap-3 text-sm">
+              <li key={r.source} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-[3px]" style={{ backgroundColor: SOURCE_COLORS[r.source] }} />
                   {r.label}
@@ -165,7 +241,7 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: EASE, delay: 0.2 + i * 0.05 }}
-            className="rounded-2xl bg-white border border-ink/[0.07] p-4 flex items-center gap-3"
+            className="card flex items-center gap-3 p-4"
           >
             <span className="w-10 h-10 rounded-xl bg-ink/[0.04] text-ink flex items-center justify-center shrink-0">
               <x.icon size={18} />
@@ -214,7 +290,7 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
                     </p>
                   </div>
                   <div className="col-span-8 sm:col-span-5">
-                    <ProgressBar value={e.fill} color={e.upcoming ? "#E8593B" : "#0B2E3D"} delay={i * 0.05} />
+                    <ProgressBar value={e.fill} color={e.upcoming ? "#FF4D00" : "#0A0A08"} delay={i * 0.05} />
                   </div>
                   <p className="col-span-4 sm:col-span-2 text-right text-sm tabular">
                     <span className="font-semibold">{e.registrations}</span>
@@ -259,6 +335,40 @@ export default function OverviewView({ a, onNavigate }: { a: Analytics; onNaviga
           )}
         </Card>
       </div>
+
+      {/* ===== Tous les modules ===== */}
+      {counts && (
+        <div>
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mutedfg">Tous les modules</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              { icon: CalendarDays, label: "Réservations", count: counts.bookings, tab: "reservations" },
+              { icon: GraduationCap, label: "Cours", count: counts.lessons, tab: "cours" },
+              { icon: Trophy, label: "Événements", count: counts.events, tab: "evenements" },
+              { icon: ShoppingBag, label: "Boutique", count: counts.products, tab: "boutique" },
+              { icon: Package, label: "Commandes", count: counts.orders, tab: "commandes" },
+              { icon: Users, label: "Joueurs", count: counts.players, tab: "joueurs" },
+            ].map((m) => (
+              <button
+                key={m.label}
+                onClick={() => onNavigate(m.tab)}
+                className="card group flex flex-col gap-4 p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:border-orange hover:shadow-lift"
+              >
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-orangeL text-orange transition-all duration-500 group-hover:rotate-[-8deg] group-hover:bg-orange group-hover:text-white">
+                  <m.icon size={20} />
+                </span>
+                <span className="flex items-end justify-between gap-2">
+                  <span>
+                    <span className="block text-sm font-semibold">{m.label}</span>
+                    <span className="block font-mono text-[11px] text-mutedfg">{int(m.count)}</span>
+                  </span>
+                  <SlideArrow size={15} />
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

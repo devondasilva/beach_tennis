@@ -4,10 +4,21 @@ import { SessionPayload, UserRole } from "./types";
 export const SESSION_COOKIE = "bt_session";
 const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 7; // 7 jours
 
-// Secret de signature des sessions. En production, définir la variable
-// d'environnement AUTH_SECRET (voir README) plutôt que d'utiliser la valeur
-// par défaut ci-dessous.
-const AUTH_SECRET = process.env.AUTH_SECRET || "beach-tennis-benin-dev-secret-change-me";
+function getAuthSecret(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (secret) {
+    if (secret.length < 32) {
+      throw new Error("AUTH_SECRET doit contenir au moins 32 caractères.");
+    }
+    return secret;
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    return "beach-tennis-benin-dev-secret-change-me";
+  }
+
+  throw new Error("AUTH_SECRET doit être défini en production.");
+}
 
 // Ce module est importé par le middleware (runtime Edge) : il ne doit
 // utiliser QUE l'API Web Crypto globale (`crypto.subtle`, disponible nativement
@@ -33,7 +44,7 @@ function bytesFromBase64url(input: string): Uint8Array {
 }
 
 async function getHmacKey(): Promise<CryptoKey> {
-  const enc = new TextEncoder().encode(AUTH_SECRET);
+  const enc = new TextEncoder().encode(getAuthSecret());
   return crypto.subtle.importKey(
     "raw",
     enc,

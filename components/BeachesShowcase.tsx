@@ -3,17 +3,20 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ChevronRight, MapPin, Waves } from "lucide-react";
+import { ArrowRight, Waves } from "lucide-react";
+import Reveal from "@/components/RevealFC";
+import ArrowButton from "@/components/ui/ArrowButton";
 
 interface Beach {
   id: string;
   name: string;
   location: string;
+  description?: string;
   images: string[];
   active: boolean;
 }
 
+/** Liste des plages façon « modules » de MADES Formation Continue. */
 export default function BeachesShowcase() {
   const [beaches, setBeaches] = useState<Beach[]>([]);
 
@@ -33,69 +36,60 @@ export default function BeachesShowcase() {
   if (beaches.length === 0) return null;
 
   return (
-    <section className="max-w-content mx-auto px-6 pt-16 md:pt-20 pb-6 md:pb-8">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="flex items-end justify-between gap-4 mb-10"
-      >
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-coral">Voir nos plages</span>
-          <h2 className="font-display text-3xl md:text-4xl font-black tracking-tight mt-3 text-ink">
-            Choisissez votre terrain.
-          </h2>
+    <section className="bg-white py-24">
+      <div className="mx-auto max-w-content px-5 sm:px-6">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <Reveal>
+            <p className="tag-label">Nos plages</p>
+            <h2 className="h-display mt-4 max-w-2xl text-5xl md:text-6xl">
+              Choisissez votre terrain, <span className="text-orange">face à la mer.</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={120}>
+            <ArrowButton href="/plages" variant="outline">
+              Toutes les plages
+            </ArrowButton>
+          </Reveal>
         </div>
-        <Link
-          href="/plages"
-          className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-coral whitespace-nowrap"
-        >
-          Voir plus <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </motion.div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {beaches.slice(0, 3).map((b, i) => (
-          <motion.div
-            key={b.id}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-          >
-            <Link
-              href={`/plages/${b.id}`}
-              className="group block bg-white rounded-[2rem] border border-ink/[0.08] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-coral/10 hover:-translate-y-1 transition-all duration-300"
-            >
-              {b.images[0] ? (
-                <div className="relative h-52 w-full overflow-hidden">
-                  <Image
-                    src={b.images[0]}
-                    alt={b.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
-                </div>
-              ) : (
-                <div className="h-52 w-full bg-sand/60 flex items-center justify-center text-ink/25">
-                  <Waves size={32} />
-                </div>
-              )}
-              <div className="p-6">
-                <h3 className="font-display text-xl font-black text-ink">{b.name}</h3>
-                <p className="mt-1 text-sm text-ink/60 inline-flex items-center gap-1.5">
-                  <MapPin size={14} className="text-coral" /> {b.location}
-                </p>
-                <span className="mt-4 flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-coral">
-                  Voir plus <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+        <div className="mt-12 divide-y divide-line border-y border-line">
+          {beaches.map((b, i) => (
+            <Reveal key={b.id} delay={i * 80}>
+              <Link
+                href={`/plages/${b.id}`}
+                className="group relative grid grid-cols-[auto_1fr_auto] items-center gap-5 overflow-hidden py-6 md:grid-cols-[4rem_auto_1fr_auto] md:gap-8"
+              >
+                <span className="absolute inset-0 origin-bottom scale-y-0 bg-orange transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100" />
+                <span className="relative hidden font-mono text-sm text-mutedfg transition-colors group-hover:text-white/70 md:block">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
+                <span className="relative inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-white transition-all duration-500 group-hover:rotate-[-6deg] md:h-24 md:w-32">
+                  {b.images[0] ? (
+                    <Image src={b.images[0]} alt="" fill sizes="128px" className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                  ) : (
+                    <Waves size={30} />
+                  )}
+                </span>
+                <div className="relative min-w-0 md:grid md:grid-cols-[minmax(0,26rem)_1fr] md:items-center md:gap-8">
+                  <div className="min-w-0">
+                    <p className="h-display text-3xl transition-colors group-hover:text-white md:text-4xl lg:text-5xl">{b.name}</p>
+                    <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-mutedfg transition-colors group-hover:text-white/75">
+                      {b.location}
+                    </p>
+                  </div>
+                  {b.description && (
+                    <p className="mt-1 hidden text-sm leading-relaxed text-mutedfg transition-colors group-hover:text-white/85 md:mt-0 md:line-clamp-2">
+                      {b.description}
+                    </p>
+                  )}
+                </div>
+                <span className="arrow-chip relative group-hover:!border-white group-hover:!bg-white group-hover:!text-orange">
+                  <ArrowRight size={18} />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
