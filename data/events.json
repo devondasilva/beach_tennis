@@ -8,18 +8,8 @@
     "entryFee": 3000,
     "prize": "Bons d'achat boutique + raquette pour l'équipe gagnante",
     "capacity": 32,
-    "registrations": []
-  },
-  {
-    "id": "evt-2",
-    "title": "Open Beach Tennis Bénin",
-    "date": "2026-10-24",
-    "category": "Confirmés",
-    "description": "Tournoi mensuel phare en simple et double, catégorie confirmés. Classement ladder mis à jour à l'issue de l'événement.",
-    "entryFee": 5000,
-    "prize": "Dotation équipementier + invitations VIP événement du mois suivant",
-    "capacity": 24,
-    "registrations": []
+    "registrations": [],
+    "poster": "/uploads/events/mv05o1xy-u5iymx.jpg"
   },
   {
     "title": "Open Beach Tennis",
@@ -29,7 +19,7 @@
     "entryFee": 5000,
     "prize": "Medaille or",
     "capacity": 125,
-    "poster": "/uploads/events/mukji5qn-djeqpm.jpg",
+    "poster": "/uploads/events/mv05ncey-fy9ajw.jpg",
     "id": "evt-mukji5qs-v5q14",
     "registrations": []
   }
