@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { createBooking, findOrCreatePlayer, getBookings, getBeachById } from "@/lib/db";
 import { findTariff, TARIFFS } from "@/lib/pricing";
 import { PaymentMethod } from "@/lib/types";
@@ -7,6 +8,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
+  }
   const bookings = getBookings().sort((a, b) => (a.date < b.date ? 1 : -1));
   return NextResponse.json({ bookings });
 }

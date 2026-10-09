@@ -195,3 +195,13 @@ changement de prix sur l'ensemble du site.
   de téléphone comme identifiant, sans mot de passe — cohérent avec l'usage
   prévu (peu de friction sur la plage), mais à faire évoluer avec un code
   SMS à usage unique si le site prend de l'ampleur.
+
+## Audit de sécurité (octobre 2026)
+
+- `GET /api/bookings`, `/api/orders`, `/api/lessons` réservés à l'administrateur (ils exposaient noms et réservations).
+- Limitation des tentatives de connexion : 5 échecs admin par IP / 15 min (429), 20 pour les joueurs.
+- Uploads : vérification de la signature binaire réelle ; suppression de fichiers confinée à `public/uploads/` (plus de traversée `..`).
+- En-têtes de sécurité (anti-iframe, nosniff, Referrer-Policy, Permissions-Policy), `X-Powered-By` retiré.
+- Cookie de session `Secure` uniquement en https.
+
+Reste à traiter : les identifiants joueurs de `/api/players/[id]` (lien personnel) sont devinables en théorie — prévoir un jeton aléatoire long ou un code SMS ; limiteur en mémoire (une seule instance).
