@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { createOrder, findOrCreatePlayer, getOrders, getProducts } from "@/lib/db";
 import { OrderItem } from "@/lib/types";
 
 export const runtime = "nodejs";
 
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
+  }
   const orders = getOrders().sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   return NextResponse.json({ orders });
 }

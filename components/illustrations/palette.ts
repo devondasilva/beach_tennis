@@ -1,14 +1,15 @@
 // Palette partagée par toutes les illustrations, alignée sur tailwind.config.ts
+// Reprise aux couleurs de MADES Formation Continue (encre quasi-noire + orange).
 export const COLORS = {
-  ink: "#0B2E3D",
-  inkSoft: "#123246",
-  sand: "#F2E4C9",
-  sandlight: "#FBF6EC",
-  coral: "#E8593B",
-  coralDark: "#C2452C",
-  lagoon: "#12807F",
-  lagoonDark: "#0C5B5A",
-  palm: "#2F6E4F",
-  sun: "#F4A63B",
+  ink: "#121212",
+  inkSoft: "#1E1E1E",
+  sand: "#F7F5F2",
+  sandlight: "#FFFFFF",
+  coral: "#E64A19",
+  coralDark: "#B8380F",
+  lagoon: "#B8380F",
+  lagoonDark: "#8A2A0B",
+  palm: "#6B6B6B",
+  sun: "#FF7A3D",
   white: "#FFFFFF",
 };

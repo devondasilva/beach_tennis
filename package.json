@@ -8,7 +8,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "create-admin": "node scripts/create-admin.js",
+    "postinstall": "node scripts/ensure-secret.js",
+    "predev": "node scripts/ensure-secret.js",
+    "prebuild": "node scripts/ensure-secret.js",
+    "prestart": "node scripts/ensure-secret.js"
   },
   "dependencies": {
     "next": "14.2.35",

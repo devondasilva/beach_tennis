@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { createLesson, findOrCreatePlayer, getLessons } from "@/lib/db";
 import { findTariff, LESSON_TARIFFS } from "@/lib/pricing";
 import { PaymentMethod } from "@/lib/types";
@@ -6,6 +7,10 @@ import { PaymentMethod } from "@/lib/types";
 export const runtime = "nodejs";
 
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
+  }
   const lessons = getLessons().sort((a, b) => (a.date < b.date ? 1 : -1));
   return NextResponse.json({ lessons });
 }

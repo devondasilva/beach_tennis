@@ -7,8 +7,8 @@ type Tone = "lagoon" | "ink" | "coral";
 
 const TONE_STYLES: Record<Tone, string> = {
   lagoon: "from-lagoon via-lagoondark to-ink",
-  ink: "from-ink via-[#123246] to-lagoondark",
-  coral: "from-coral via-[#c2452c] to-ink",
+  ink: "from-ink via-[#1E1E1E] to-lagoondark",
+  coral: "from-coral via-[#B8380F] to-ink",
 };
 
 export default function PhotoBlock({

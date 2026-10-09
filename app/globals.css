@@ -12,8 +12,8 @@ html {
 }
 
 body {
-  background-color: #FBF6EC;
-  color: #0B2E3D;
+  background-color: #FFFFFF;
+  color: #121212;
 }
 
 /* Motif discret de lignes de terrain, utilisé en fond de section plutôt que des icônes génériques */
@@ -21,8 +21,8 @@ body {
   background-image:
     repeating-linear-gradient(
       to right,
-      rgba(11, 46, 61, 0.06) 0px,
-      rgba(11, 46, 61, 0.06) 1px,
+      rgba(18, 18, 18, 0.06) 0px,
+      rgba(18, 18, 18, 0.06) 1px,
       transparent 1px,
       transparent 64px
     );
@@ -48,14 +48,14 @@ body {
 
 .rule {
   height: 1px;
-  background: rgba(11, 46, 61, 0.15);
+  background: rgba(18, 18, 18, 0.15);
 }
 
 .tag-label {
   font-family: var(--font-body);
   font-size: 0.78rem;
   letter-spacing: 0.02em;
-  color: #E8593B;
+  color: #E64A19;
   font-weight: 600;
 }
 
@@ -65,7 +65,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #12807F;
+  outline: 2px solid #E64A19;
   outline-offset: 2px;
 }
 
@@ -79,6 +79,6 @@ textarea:focus-visible {
 }
 
 ::selection {
-  background: #F4A63B;
-  color: #0B2E3D;
+  background: #FF7A3D;
+  color: #121212;
 }

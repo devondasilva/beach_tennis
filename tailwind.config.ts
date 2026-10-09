@@ -8,14 +8,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0B2E3D",       // encre lagon - texte, fonds sombres
-        sand: "#F2E4C9",      // sable chaud
-        sandlight: "#FBF6EC", // sable clair - fond de page
-        coral: "#E8593B",     // corail coucher de soleil - accent / CTA
-        lagoon: "#12807F",    // lagon - liens, lignes de terrain
-        lagoondark: "#0C5B5A",
-        palm: "#2F6E4F",      // vert palmier - accent secondaire discret
-        sun: "#F4A63B",       // jaune sable / soleil
+        ink: "#121212",       // encre lagon - texte, fonds sombres
+        sand: "#F7F5F2",      // sable chaud
+        sandlight: "#FFFFFF", // sable clair - fond de page
+        coral: "#E64A19",     // corail coucher de soleil - accent / CTA
+        lagoon: "#B8380F",    // lagon - liens, lignes de terrain
+        lagoondark: "#8A2A0B",
+        palm: "#6B6B6B",      // vert palmier - accent secondaire discret
+        sun: "#FF7A3D",       // jaune sable / soleil
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],

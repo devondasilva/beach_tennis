@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { getPlayers, findOrCreatePlayer } from "@/lib/db";
 import { Level } from "@/lib/types";
 
@@ -6,6 +7,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Accès administrateur requis." }, { status: 401 });
+  }
   const players = getPlayers().sort((a, b) => b.loyaltyPoints - a.loyaltyPoints);
   return NextResponse.json({ players });
 }
