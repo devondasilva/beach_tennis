@@ -205,3 +205,15 @@ changement de prix sur l'ensemble du site.
 - Cookie de session `Secure` uniquement en https.
 
 Reste à traiter : les identifiants joueurs de `/api/players/[id]` (lien personnel) sont devinables en théorie — prévoir un jeton aléatoire long ou un code SMS ; limiteur en mémoire (une seule instance).
+
+## Connexion admin sur Vercel
+
+Vercel a un disque en lecture seule : `data/admins.json` (exclu de GitHub) n'existe pas en ligne. Le compte admin peut donc être défini par variables d'environnement :
+
+1. Sur votre ordinateur : `npm run hash-password -- Devon MonMotDePasse "Devon"` (sans chevrons) → affiche 4 lignes.
+2. Vercel → Settings → Environment Variables : ajoutez `ADMIN_USERNAME`, `ADMIN_NAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_PASSWORD_SALT`, plus `AUTH_SECRET` (48+ caractères aléatoires).
+3. Redéployez, puis connectez-vous sur `/login` (identifiant sensible à la casse).
+
+Pour changer le mot de passe : régénérez le hash et mettez à jour les variables (l'écran « changer le mot de passe » est désactivé pour ce compte).
+
+⚠️ Sur Vercel, les réservations, commandes, avis, messages et photos envoyées ne sont pas conservés (fichiers JSON / disque en lecture seule). Pour un usage réel, prévoir une base de données + Vercel Blob, ou un hébergeur avec disque persistant.

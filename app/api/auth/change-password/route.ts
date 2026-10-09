@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminById, updateAdminPassword } from "@/lib/db";
+import { getAdminById, updateAdminPassword, ENV_ADMIN_ID } from "@/lib/db";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { requireAdmin } from "@/lib/auth";
 
@@ -34,6 +34,13 @@ export async function POST(req: NextRequest) {
   const admin = getAdminById(session.id);
   if (!admin) {
     return NextResponse.json({ error: "Administrateur introuvable." }, { status: 404 });
+  }
+
+  if (admin.id === ENV_ADMIN_ID) {
+    return NextResponse.json(
+      { error: "Ce compte est défini par variables d'environnement : changez ADMIN_PASSWORD_HASH et ADMIN_PASSWORD_SALT dans Vercel (npm run hash-password), puis redéployez." },
+      { status: 400 }
+    );
   }
 
   const ok = verifyPassword(currentPassword, admin.passwordHash, admin.passwordSalt);
