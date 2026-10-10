@@ -124,7 +124,7 @@ export default function Navbar() {
                 className="h-9 w-9 transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-105"
               />
               <span className={`h-display text-[1.45rem] leading-none ${open ? "text-white" : "text-ink"}`}>
-                Beach Tennis <span className="text-orange">Bénin</span>
+                MADES <span className="text-orange"> BEACH TENNIS Bénin</span>
               </span>
               <span
                 className={`hidden border-l pl-3 font-mono text-[9.5px] uppercase leading-[1.25] tracking-[0.18em] sm:block ${
