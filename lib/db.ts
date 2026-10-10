@@ -67,9 +67,33 @@ export function removeSiteImage(slot: SiteImageSlot): string | undefined {
 }
 
 // ---------- Admins ----------
+export const ENV_ADMIN_ID = "admin-env";
+
+/**
+ * Administrateurs : fichier data/admins.json (hébergement avec disque persistant)
+ * + un compte défini par variables d'environnement (Vercel, où le disque est en
+ * lecture seule) : ADMIN_USERNAME, ADMIN_PASSWORD_HASH, ADMIN_PASSWORD_SALT
+ * (à générer avec `npm run hash-password`).
+ */
 export function getAdmins(): Admin[] {
-  if (!fs.existsSync(path.join(dataDir, "admins.json"))) return [];
-  return readJSON<Admin[]>("admins.json");
+  const fromFile = fs.existsSync(path.join(dataDir, "admins.json"))
+    ? readJSON<Admin[]>("admins.json")
+    : [];
+  const { ADMIN_USERNAME, ADMIN_PASSWORD_HASH, ADMIN_PASSWORD_SALT, ADMIN_NAME } = process.env;
+  if (ADMIN_USERNAME && ADMIN_PASSWORD_HASH && ADMIN_PASSWORD_SALT) {
+    return [
+      {
+        id: ENV_ADMIN_ID,
+        username: ADMIN_USERNAME,
+        name: ADMIN_NAME || ADMIN_USERNAME,
+        passwordHash: ADMIN_PASSWORD_HASH,
+        passwordSalt: ADMIN_PASSWORD_SALT,
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+      ...fromFile.filter((a) => a.username !== ADMIN_USERNAME),
+    ];
+  }
+  return fromFile;
 }
 
 export function verifyAdminCredentials(username: string, password: string): Admin | null {

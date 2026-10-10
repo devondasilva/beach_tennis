@@ -195,3 +195,25 @@ changement de prix sur l'ensemble du site.
   de téléphone comme identifiant, sans mot de passe — cohérent avec l'usage
   prévu (peu de friction sur la plage), mais à faire évoluer avec un code
   SMS à usage unique si le site prend de l'ampleur.
+
+## Audit de sécurité (octobre 2026)
+
+- `GET /api/bookings`, `/api/orders`, `/api/lessons` réservés à l'administrateur (ils exposaient noms et réservations).
+- Limitation des tentatives de connexion : 5 échecs admin par IP / 15 min (429), 20 pour les joueurs.
+- Uploads : vérification de la signature binaire réelle ; suppression de fichiers confinée à `public/uploads/` (plus de traversée `..`).
+- En-têtes de sécurité (anti-iframe, nosniff, Referrer-Policy, Permissions-Policy), `X-Powered-By` retiré.
+- Cookie de session `Secure` uniquement en https.
+
+Reste à traiter : les identifiants joueurs de `/api/players/[id]` (lien personnel) sont devinables en théorie — prévoir un jeton aléatoire long ou un code SMS ; limiteur en mémoire (une seule instance).
+
+## Connexion admin sur Vercel
+
+Vercel a un disque en lecture seule : `data/admins.json` (exclu de GitHub) n'existe pas en ligne. Le compte admin peut donc être défini par variables d'environnement :
+
+1. Sur votre ordinateur : `npm run hash-password -- Devon MonMotDePasse "Devon"` (sans chevrons) → affiche 4 lignes.
+2. Vercel → Settings → Environment Variables : ajoutez `ADMIN_USERNAME`, `ADMIN_NAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_PASSWORD_SALT`, plus `AUTH_SECRET` (48+ caractères aléatoires).
+3. Redéployez, puis connectez-vous sur `/login` (identifiant sensible à la casse).
+
+Pour changer le mot de passe : régénérez le hash et mettez à jour les variables (l'écran « changer le mot de passe » est désactivé pour ce compte).
+
+⚠️ Sur Vercel, les réservations, commandes, avis, messages et photos envoyées ne sont pas conservés (fichiers JSON / disque en lecture seule). Pour un usage réel, prévoir une base de données + Vercel Blob, ou un hébergeur avec disque persistant.
